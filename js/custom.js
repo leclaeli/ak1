@@ -55,7 +55,19 @@
                 //console.log(response);
             }
         });
-    });
+
+// Accordion
+        //On click any <a> within the container
+        $( '#accordion li .collapsed' ).slideUp(1);
+        $( '#accordion li' ).click(function(e) {
+            // Close all <div> but the <div> right after the clicked <a>
+            //$(e.target).next('div').siblings('div').slideUp();
+            // Toggle open/close on the <div> after the <a>, opening it if not open.
+            $(e.target).children('.collapsed').slideToggle();
+        });
+
+
+    }); // End $(function)
 })(jQuery)
 
 // Count results (needs to run after google maps) - called from howFarIsIt() in google-maps.js

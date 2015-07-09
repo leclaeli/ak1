@@ -8,29 +8,10 @@
     $age = get_query_var( 'age' ); 
     $user_address = ( get_query_var( 'addy' ) != 0 ? get_query_var( 'addy' ) : "Milwaukee, WI" );
     $price = get_query_var( 'pr', 0 );
-    // switch ( $price ) {
-    //     case 25 : // $25 and under
-    //         $price_max = 25;
-    //         break;
-    //     case 50 : // $25 to $50
-    //         $price_max = 50;
-    //         break;
-    //     case 100 : // $50 to $100
-    //         $price_max = 100;
-    //         break;
-    //     case 200 : // $100 to $200 
-    //         $price_max = 200;
-    //         break;
-    //     case 201 : // $200 and above
-    //         $price_max = 99999999;
-    //         break;
-    //     default :
-    //         $price_min = 0;
-    //         $price_max = 0;
-    // }
     $experience = get_query_var( 'ex' ); // experience/activity level
     $distance = ( get_query_var( 'di', 9999999 ) != 0 ? get_query_var( 'di' ) : 9999999 ); // distance
     $sr = get_query_var( 'sr' ); // sort results
+    var_dump($sr);
     switch ($sr) {
         case "title_za" :
             $order = 'DESC';
@@ -44,10 +25,17 @@
             $order = 'ASC';
             $order_by = 'prog_date_start';
             break;
+        case "price" :
+            $order = 'ASC';
+            $order_by = 'prog_cost';
+            $key = 'prog_cost';
+            $type = 'NUMERIC';
+            break;
         default :
             $order = 'ASC';
             $order_by = 'prog_date_start';
     }
+    var_dump($order_by);
 ?>
 
 <?php 
@@ -104,13 +92,14 @@
                 ),
             ),
         ),
-
-        'orderby' => 'prog_ongoing',
+        'meta_key' => $key,
+        'orderby' => $order_by,
         // 'orderby' => array(
         //     'start_date' => 'ASC',
         //     'ongoing' => 'DESC',
         // ),
-        'order'   => 'DESC',
+        'order'   => $order,
+        'meta_type' => $type,
     );
 
     // if ( !empty( $start_date ) ) {

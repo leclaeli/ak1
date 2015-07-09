@@ -18,16 +18,11 @@ get_header();
     </form> -->
 </div>
 
-<div>
-    <button id="map-view">Map View</button>
-    <button id="list-view" class="clicked">List View</button>
-</div>
-
 <div id="container">
     <div id="programs-list" class="box">
     <?php
     $query = new WP_Query( $args );
-    // echo '<pre>'; print_r($query); echo '</pre>';
+    // echo '<pre>'; print_r($query->request); echo '</pre>';
     // $total_results = $query->found_posts;
         // The Loop
         if ( $query->have_posts() ) {
@@ -117,7 +112,6 @@ get_header();
 <div id="content-pane">
     <div id="outputDiv"></div>
 </div>
-
 
 
 <?php get_footer(); ?>

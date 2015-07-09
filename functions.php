@@ -245,6 +245,7 @@ function custom_js_script() {
     wp_enqueue_script('custom-script', get_stylesheet_directory_uri() . '/js/custom.js', array( 'jquery', 'google-maps'), false, false);
     wp_enqueue_script('marker-with-label', get_stylesheet_directory_uri() . '/js/markerwithlabel.js', array(), false, true);
     wp_enqueue_script('jquery-ui-datepicker');
+    // wp_enqueue_script('jquery-ui-accordion'); 	 
     wp_enqueue_style('plugin_name-admin-ui-css', 'https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.21/themes/smoothness/jquery-ui.css', false, false, false );
     wp_localize_script( 'custom-script', 'testing', array(
         'ajax_url' => admin_url( 'admin-ajax.php' )

@@ -26,30 +26,76 @@
 	<div class="container-left">
 		<div class="asapkids-menu">
 			<form action="/wordpress/search-results/" method="get">
-				<ul>
+				<ul id="accordion">
 					<li><a class="fa fa-bars" href="#"></a>
 					</li>
 					<li><a class="fa fa-user" href="#"></a></li>
-					<li><a class="fa fa-map-marker" href="#"></a></li>
+					<li><a class="fa fa-map-marker" href="#"><label>Distance:</label></a>
+						<div class="collapsed">
+							<select name="di" id="select-distance" style="width: 300px;">
+								<option></option>
+								<option value="1609.34">Within 1 Mile</option>
+								<option value="3218.69">Within 2 Miles</option>
+								<option value="8046.72">Within 5 Miles</option>
+								<option value="16093.4">Within 10 Miles</option>
+								<option value="32186.9">Within 20 Miles</option>
+								<option value="">Any Distance</option>
+							</select>
+						</div>	
+					</li>
 					<li><a class="fa fa-birthday-cake" href="#"><label>Age:</label></a>
-						<div>
+						<div class="collapsed">
 							<input type="number" name="age" id="age" min="4" max="19" >
 						</div>
 					</li>
-					<li><a class="fa fa-money" href="#"></a></li>
-					<li><a class="fa fa-calendar" href="#"></a></li>
-					<li><a class="fa fa-star-o" href="#"><label>Experience:</label></a>
-						<ul>
-							<li><label for="exp1"><input id="exp1" type="checkbox" value="Beginner" name="ex[]">Beginner</label></li>
-							<li><label for="exp2"><input id="exp2" type="checkbox" value="Intermediate" name="ex[]">Intermediate</label></li>
-							<li><label for="exp3"><input id="exp3" type="checkbox" value="Advanced" name="ex[]">Advanced</label></li>
-							<li><label for="exp4"><input id="exp4" type="checkbox" value="0" name="ex[]">Any or Not Applicable</label></li>
-						</ul>
+					<li><a class="fa fa-money" href="#"><label>Price:</label></a>
+						<div class="collapsed">
+							<select name="pr" id="select-price" style="width: 300px;">
+								<option></option>
+								<option value="25">$25 or Less</option>
+								<option value="50">$50 or Less</option>
+								<option value="100">$100 or Less</option>
+								<option value="200">$200 or Less</option>
+								<option value="">Any</option>
+							</select>
+						</div>
 					</li>
-					<li><a class="fa fa-heart-o" href="#"></a></li>
-					<li class="menu-background"> </li>				
+					<li><a class="fa fa-calendar" href="#"><label for="datepicker">Date:</label></a>
+						<div class="collapsed">
+							<span>Programs that begin before or on the date selected.</span>
+							<input type="text" id="datepicker" />
+						</div>
+					</li>
+					<li><a class="fa fa-star-o" href="#"><label>Experience:</label></a>
+						<div class="collapsed">
+							<ul>
+								<li><label for="exp1"><input id="exp1" type="checkbox" value="Beginner" name="ex[]">Beginner</label></li>
+								<li><label for="exp2"><input id="exp2" type="checkbox" value="Intermediate" name="ex[]">Intermediate</label></li>
+								<li><label for="exp3"><input id="exp3" type="checkbox" value="Advanced" name="ex[]">Advanced</label></li>
+								<li><label for="exp4"><input id="exp4" type="checkbox" value="0" name="ex[]">Any or Not Applicable</label></li>
+							</ul>
+						</div>
+					</li>
+					<li><a class="fa fa-heart-o" href="#"><label>Interests:</label></a>
+						<div class="collapsed">
+							<select multiple name="ai[]" id="select-ai" style="width: 300px;">
+								<?php 
+								global $post; 
+								$args = array( 'numberposts' => -1, 'post_type' => 'cpt_interest' ); 
+								$posts = get_posts($args);
+								foreach( $posts as $post ) : setup_postdata($post); ?>
+									<option value="<? echo $post->ID; ?>"><?php the_title(); ?></option> 
+								<?php endforeach; 
+								wp_reset_postdata();
+								?>
+							</select>
+						</div>
+					</li>
+					<li><input type="submit" value="Save Preferences"></li>
+					<li class="menu-background"> </li>
+
 				</ul>
-				<input type="submit" value="Filter Results">
+				
 			</form>
 		</div>
 	</div><div class="container-right">
@@ -70,16 +116,18 @@
 				<div class="asapkids-search-info-icons">
 					<ul>
 						<li><a class="fa fa-th-large" href="#"></a></li>
-						<li><a id="list-view" class="fa fa-th-list" href="#"></a></li>
+						<li><a id="list-view" class="fa fa-th-list clicked" href="#"></a></li>
 						<li><a id="map-view" class="fa fa-map-marker" href="#"></a></li>
 					</ul>
 				</div>
 				<div class="asapkids-search-info-select">
-					<select name="asapkids-sort">
-						<option value="location">Location</option>
-						<option value="date">Date</option>
-						<option value="price">Price</option>
-					</select>
+					<form action="/wordpress/search-results/" method="get">
+						<select name="sr" onchange="this.form.submit()">
+							<option value="location">Location</option>
+							<option value="date">Date</option>
+							<option value="price">Price</option>
+						</select>
+					</form>
 				</div>
 			</div>
 		<?php // } ?>

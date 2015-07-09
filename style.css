@@ -885,15 +885,17 @@ html { background-color: #f1f1f1; height: 100%; }
 
 .container-left, .container-right { -webkit-box-sizing: border-box; -moz-box-sizing: border-box; box-sizing: border-box; }
 
-.container-left { display: inline-block; min-width: 320px; min-height: 100%; vertical-align: top; margin: 0; padding: 0; position: fixed; } /*EL edit*/
-.container-left .asapkids-menu { background-color: #F57C09; }
+.container-left { display: inline-block; max-width: 300px; min-height: 100%; height: 100%; vertical-align: top; margin: 0; padding: 0; position: fixed; } /*EL edit*/
+.container-left .asapkids-menu { background-color: #F57C09; height: 100vh; }
 .container-left .asapkids-menu ul, .asapkids-search-info .asapkids-search-info-icons ul { margin: 0; padding: 0; list-style: none; }
-.container-left .asapkids-menu li { border-bottom: 1px solid #E8700A; text-align: center; }
-.container-left .asapkids-menu li:hover { background-color: #F4A05B; }
-.container-left .asapkids-menu li a { color: #fff; text-decoration: none; padding: 20px 25px; }
+.container-left .asapkids-menu > li { border-bottom: 1px solid #E8700A; text-align: left; }
+/*.container-left .asapkids-menu li:hover { background-color: #F4A05B; }*/
+.container-left .asapkids-menu li a { color: #fff; text-decoration: none; }
+.container-left .asapkids-menu #accordion > li > a { padding: 20px 25px; }
 .container-left .asapkids-menu .menu-background { background-color: #F4A05B; border-bottom: none; display: block; padding: 100% 0; }
+.container-left .asapkids-menu .chosen-single { padding: 0 0 0 8px; color: #000; }
 
-.container-right { display: inline-block; width: 100%; vertical-align: top; margin: 0; padding: 0 0 0 320px; }
+.container-right { display: inline-block; width: 100%; vertical-align: top; margin: 0; padding: 0 0 0 300px; }
 
 .site-header { background-color: #0441EC; width: 100%; margin: 0; padding: 10px 50px; text-align: justify; }
 
@@ -1032,4 +1034,27 @@ header .search-form .search-field {
 #programs-map {
     left: 100%;
     position: absolute;
+}
+
+.container-left {
+	position: fixed;
+	left: 0;
+	top: 0;
+	bottom: 0;
+	right: 0;
+	z-index: 0;
+	width: 300px;
+	overflow-y: auto;
+	-webkit-overflow-scrolling: touch;
+}
+
+.chosen-container.chosen-container-single,
+.chosen-container.chosen-container-multi,
+.collapsed select {
+	max-width: 240px;
+}
+
+#accordion .collapsed {
+	background-color: #f4a05b;
+	padding: 20px;
 }

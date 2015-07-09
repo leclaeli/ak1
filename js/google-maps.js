@@ -188,6 +188,7 @@ function calculateDistances() {
 function callback(response, status) {
     if (status != google.maps.DistanceMatrixStatus.OK) {
     console.log('Error was: ' + status);
+    howFarIsIt();
     } else {
     var origins = response.originAddresses;
     var destinations = response.destinationAddresses;
@@ -196,7 +197,6 @@ function callback(response, status) {
     //deleteOverlays();
 
         for (var i = 0; i < origins.length; i++) {
-            console.log(response);
             var results = response.rows[i].elements;
             //addMarker(origins[i], false);
             for (var j = 0; j < results.length; j++) {
