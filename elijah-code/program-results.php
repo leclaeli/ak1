@@ -11,7 +11,7 @@ get_header();
     <div id="programs-list" class="box">
     <?php
     $query = new WP_Query( $args );
-    //echo '<pre>'; print_r($query->request); echo '</pre>';
+    // echo '<pre>'; print_r($query->request); echo '</pre>';
         // The Loop
         if ( $query->have_posts() ) {
             echo '<ul>';

@@ -61,18 +61,7 @@
             $(e.target).children('.collapsed').slideToggle();
         });
 
-// submit forms
-        $('.search-field').keyup(function(event) {
-            /* Act on the event */
-            var fieldText = $( this ).val();
-            $( '#filter-search' ).val( fieldText );
-        });
-        $('.search-form').submit(function(event) {
-            /* Act on the event */
-            event.preventDefault();
-            $( '#preferences' ).submit();
-            
-        });
+
     }); // End $(function)
 })(jQuery)
 
@@ -82,3 +71,5 @@ function myLateFunction() {
     jQuery( '.total-results' ).text( totalResults );
 }
 
+/*  jQuery ready function. Specify a function to execute when the DOM is fully loaded.
+$(document).ready(); */

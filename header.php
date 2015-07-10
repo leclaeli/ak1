@@ -20,12 +20,18 @@
 </head>
 
 <body <?php body_class(); ?>>
+
+
 <div id="page" class="hfeed site">
 	<a class="skip-link screen-reader-text" href="#content"><?php esc_html_e( 'Skip to content', 'asapkids' ); ?></a>
 
 	<div class="container-left">
+<?php
+//echo "<pre>"; print_r($wp_query->query_vars); echo "</pre>";
+?>
+	
 		<div class="asapkids-menu">
-			<form action="/wordpress/search-results/" method="get">
+			<form id="preferences">
 				<ul id="accordion">
 					<li><a class="fa fa-bars" href="#"></a>
 					</li>
@@ -91,6 +97,20 @@
 							</select>
 						</div>
 					</li>
+					<li><a class="fa fa-star-o" href="#"><label>Days:</label></a>
+						<div class="collapsed">
+							<ul>
+								<li><label for="dow2"><input id="dow2" type="checkbox" value="monday" name="dow[]">Monday</label></li>
+								<li><label for="dow3"><input id="dow3" type="checkbox" value="tuesday" name="dow[]">Tuesday</label></li>
+								<li><label for="dow4"><input id="dow4" type="checkbox" value="wednesday" name="dow[]">Wednesday</label></li>
+								<li><label for="dow5"><input id="dow5" type="checkbox" value="thursday" name="dow[]">Thursday</label></li>
+								<li><label for="dow6"><input id="dow6" type="checkbox" value="friday" name="dow[]">Friday</label></li>
+								<li><label for="dow7"><input id="dow7" type="checkbox" value="saturday" name="dow[]">Saturday</label></li>
+								<li><label for="dow1"><input id="dow1" type="checkbox" value="sunday" name="dow[]">Sunday</label></li>
+							</ul>
+						</div>
+					</li>
+					<input type="hidden" name="s" id="filter-search" value="<?php echo get_search_query(); ?>" />
 					<li><input type="submit" value="Save Preferences"></li>
 					<li class="menu-background"> </li>
 
@@ -121,7 +141,7 @@
 					</ul>
 				</div>
 				<div class="asapkids-search-info-select">
-					<form action="/wordpress/search-results/" method="get">
+					<form>
 						<select name="sr" onchange="this.form.submit()">
 							<option value="location">Location</option>
 							<option value="date">Date</option>

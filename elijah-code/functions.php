@@ -201,7 +201,6 @@ function asapkids_query_vars( $qvars ) {
     $qvars[] = 'pr'; // price
     $qvars[] = 'ex'; // experience
     $qvars[] = 'di'; // distance in miles
-    $qvars[] = 's'; // search
     return $qvars;
 }
 add_filter( 'query_vars', 'asapkids_query_vars' , 10, 1 );

@@ -1,5 +1,4 @@
 <?php
-    $s = get_search_query();
     $interests = get_query_var( 'ai' ); // associated_interests
     $daysofweek = get_query_var( 'dow' ); // day of week
     $start_date = get_query_var( 'sd' ); // start date 
@@ -45,7 +44,6 @@
     $args = array(
         'posts_per_page' => -1,
         'post_type' => 'cpt_program',
-        's' => $s,
         'meta_query' => array(
             array(
             'relation' => 'OR',
