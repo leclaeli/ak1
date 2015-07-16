@@ -71,14 +71,39 @@
             /* Act on the event */
             event.preventDefault();
             $( '#preferences' ).submit();
-            
         });
+
+// Count results (needs to run after google maps) - called from howFarIsIt() in google-maps.js
+        function myLateFunction() {
+            var totalResults = jQuery( '.program-list' ).filter(':visible').length;
+            jQuery( '.total-results' ).text( totalResults );
+            sortDistance();
+        }
+            
+// Sort based on distance
+        function sortDistance() {
+            console.log('sort distance');
+            var $programs = $( '#programs-list > ul' ),
+                $programsli = $programs.children( '.pinned' );
+
+            $programsli.sort(function(a,b){
+                var ad = a.getAttribute('data-distance'),
+                    bd = b.getAttribute('data-distance');
+
+                if(ad > bd) {
+                    return 1;
+                }
+                if(ad < bd) {
+                    return -1;
+                }
+                return 0;
+            });
+
+            $programsli.detach().appendTo($programs);
+        }
+        
+
     }); // End $(function)
 })(jQuery)
 
-// Count results (needs to run after google maps) - called from howFarIsIt() in google-maps.js
-function myLateFunction() {
-    var totalResults = jQuery( '.program-list' ).filter(':visible').length;
-    jQuery( '.total-results' ).text( totalResults );
-}
 

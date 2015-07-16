@@ -57,7 +57,8 @@ get_header(); ?>
 						$date_end = get_field('prog_date_end');
 						$cost = get_field('prog_cost');
 						$location = get_field('prog_location');
-						//$level = implode(', ', get_field('prog_activity_level'));
+						$level = implode(', ', get_field('prog_activity_level'));
+						$days_offered = get_field( 'prog_days_offered' );
 					?>	
 					
 					<div class="asapkids-search-result-container">
@@ -131,6 +132,7 @@ get_header(); ?>
 									<?php if( $level ) : ?>
 										<li><i class="fa fa-star-o"></i><?php echo $level; ?></li>
 									<?php endif; ?>
+									<li>Days: <?php echo implode( ", ", $days_offered ); ?> </li>
 								</ul>
 								
 								<div class="asapkids-program-details-button"><a href="<?php echo esc_url(get_permalink()); ?>">See Event Details</a></div>

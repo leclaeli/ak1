@@ -68,8 +68,17 @@
 					</li>
 					<li><a class="fa fa-calendar" href="#"><label for="datepicker">Date:</label></a>
 						<div class="collapsed">
-							<span>Programs that begin before or on the date selected.</span>
-							<input type="text" id="datepicker" />
+							<span>I'm looking for programs that begin before:</span>
+							<input type="text" id="datepicker" placeholder="Select a date" />
+							<ul>
+								<li><label for="dow2"><input id="dow2" type="checkbox" value="monday" name="dow[]">Monday</label></li>
+								<li><label for="dow3"><input id="dow3" type="checkbox" value="tuesday" name="dow[]">Tuesday</label></li>
+								<li><label for="dow4"><input id="dow4" type="checkbox" value="wednesday" name="dow[]">Wednesday</label></li>
+								<li><label for="dow5"><input id="dow5" type="checkbox" value="thursday" name="dow[]">Thursday</label></li>
+								<li><label for="dow6"><input id="dow6" type="checkbox" value="friday" name="dow[]">Friday</label></li>
+								<li><label for="dow7"><input id="dow7" type="checkbox" value="saturday" name="dow[]">Saturday</label></li>
+								<li><label for="dow1"><input id="dow1" type="checkbox" value="sunday" name="dow[]">Sunday</label></li>
+							</ul>
 						</div>
 					</li>
 					<li><a class="fa fa-star-o" href="#"><label>Experience:</label></a>
@@ -99,15 +108,7 @@
 					</li>
 					<li><a class="fa fa-star-o" href="#"><label>Days:</label></a>
 						<div class="collapsed">
-							<ul>
-								<li><label for="dow2"><input id="dow2" type="checkbox" value="monday" name="dow[]">Monday</label></li>
-								<li><label for="dow3"><input id="dow3" type="checkbox" value="tuesday" name="dow[]">Tuesday</label></li>
-								<li><label for="dow4"><input id="dow4" type="checkbox" value="wednesday" name="dow[]">Wednesday</label></li>
-								<li><label for="dow5"><input id="dow5" type="checkbox" value="thursday" name="dow[]">Thursday</label></li>
-								<li><label for="dow6"><input id="dow6" type="checkbox" value="friday" name="dow[]">Friday</label></li>
-								<li><label for="dow7"><input id="dow7" type="checkbox" value="saturday" name="dow[]">Saturday</label></li>
-								<li><label for="dow1"><input id="dow1" type="checkbox" value="sunday" name="dow[]">Sunday</label></li>
-							</ul>
+							
 						</div>
 					</li>
 					<input type="hidden" name="s" id="filter-search" value="<?php echo get_search_query(); ?>" />
