@@ -1189,11 +1189,6 @@ header .search-form .search-field {
 	line-height: 40px;
 }
 
-/*#my-menu .mm-listview > li {
-	border-bottom: 1px solid #e8700a;
-}*/
-
-
 #my-menu .mm-listview > li:not(.mm-divider)::after {
 	left: 0;
 }

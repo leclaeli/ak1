@@ -5,7 +5,7 @@
     $start_date = get_query_var( 'sd' ); // start date 
     $prog_orgs = get_query_var( 'org' ); // end date
     $age = get_query_var( 'age' ); 
-    $user_address = ( get_query_var( 'addy' ) != 0 ? get_query_var( 'addy' ) : "Milwaukee, WI" );
+    $user_address =  get_query_var( 'addy' );
     $price = get_query_var( 'pr', 0 );
     $experience = get_query_var( 'ex' ); // experience/activity level
     $distance = ( get_query_var( 'di', 9999999 ) != 0 ? get_query_var( 'di' ) : 9999999 ); // distance

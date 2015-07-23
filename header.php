@@ -245,7 +245,6 @@ function geolocate() {
         <li><input type="hidden" name="s" id="filter-search" value="<?php echo get_search_query(); ?>" /></li>
         <li><input id="view-results" type="submit" value="Apply Filters"></li>
    </ul>
-
 </form>
 
 
@@ -274,7 +273,6 @@ function geolocate() {
 				</div>
 				<div class="asapkids-search-info-icons">
 					<ul>
-						<li><a class="fa fa-th-large" href="#"></a></li>
 						<li><a id="list-view" class="fa fa-th-list clicked" href="#"></a></li>
 						<li><a id="map-view" class="fa fa-map-marker" href="#"></a></li>
 					</ul>

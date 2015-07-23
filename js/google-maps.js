@@ -3,7 +3,6 @@
 */
 
 (function($) {
-console.log('running');
 /*
 *  render_map
 *
@@ -86,7 +85,6 @@ function add_marker( $marker, map, index ) {
         labelStyle: {opacity: 0.75},
         title : programName[index],
     });
-    console.log(marker);
     // add to array
     map.markers.push( marker );
 
@@ -165,15 +163,19 @@ $(document).ready(function(){
         progLocation[index] = onlyLatLng;
     });
     calculateDistances();
+  
 });
 
-// Calculate Distance - Distance Matrix Service
-// var origin1 = '<?php echo $user_address; ?>';
-
-$( '#autocomplete' ).focusout(function(event) {
-    /* Act on the event */
-    console.log('blurred');
-});
+    // Calculate Distance - Distance Matrix Service
+    var origin2 = '<?php echo $user_address; ?>';
+    $(function() {
+        $( '#autocomplete' ).blur(function() {
+            $( '#autocomplete' ).delay(500).queue( function() {
+                calculateDistances();
+                $( this ).dequeue();
+            });
+        });
+    });
 
 function getOrigin() {
     var origin1 = $( '#autocomplete' ).val();
@@ -201,6 +203,7 @@ function callback(response, status) {
     var origins = response.originAddresses;
     var destinations = response.destinationAddresses;
     var outputDiv = document.getElementById('outputDiv');
+    console.log(destinations);
     outputDiv.innerHTML = '';
     //deleteOverlays();
 
@@ -226,7 +229,6 @@ function howFarIsIt() {
         var howFar = $( el ).attr('data-distance');
         var progId = $( el ).attr( 'id' );
         var maxDistance = gmap.distance;
-        console.log( howFar + ' : ' + maxDistance );
         if (howFar > parseInt( maxDistance ) ) {
             $( el ).remove();
             $( '.marker[id="' + progId + '"]' ).remove();

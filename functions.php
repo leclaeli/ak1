@@ -214,25 +214,21 @@ class Location {
 
 // Enqueue Scripts
 function custom_js_script() {
-    if ( !is_page_template( 'update-child.php' ) ) {
-        wp_enqueue_script('google-maps-api', 'https://maps.googleapis.com/maps/api/js?v=3.exp&signed_in=true&libraries=places', array(), false, true);    
-    }
-    wp_enqueue_script('google-maps', get_stylesheet_directory_uri() . '/js/google-maps.js', array( 'jquery'), false, true);
-    wp_enqueue_script('custom-script', get_stylesheet_directory_uri() . '/js/custom.js', array( 'jquery', 'google-maps'), false, false);
+    wp_enqueue_script('google-maps-api', 'https://maps.googleapis.com/maps/api/js?v=3.exp&signed_in=true&libraries=places', array(), false, true);    
+    wp_enqueue_script( 'asapkids-jquery-functions', get_template_directory_uri() . '/js/functions.js', array(), '20130115', true );
     wp_enqueue_script('marker-with-label', get_stylesheet_directory_uri() . '/js/markerwithlabel_packed.js', array(), false, true);
     wp_enqueue_script('jquery-ui-datepicker');	 
     wp_enqueue_style('plugin_name-admin-ui-css', 'https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.21/themes/smoothness/jquery-ui.css', false, false, false );
-    wp_localize_script( 'custom-script', 'testing', array(
-        'ajax_url' => admin_url( 'admin-ajax.php' )
-    ) );
-    wp_localize_script( 'google-maps', 'gmap', array(
-        'distance' => ( get_query_var( 'di', 9999999 ) != 0 ? get_query_var( 'di' ) : 9999999 ) // distance
+    wp_localize_script( 'asapkids-jquery-functions', 'ak_localize', array(
+        'ajax_url' => admin_url( 'admin-ajax.php' ),
+        'distance' => ( get_query_var( 'di', 9999999 ) != 0 ? get_query_var( 'di' ) : 9999999 ), // distance
+        'user_address' => get_query_var( 'addy' ),
     ) );
     //mmenu
-   wp_enqueue_script('mmenu', get_stylesheet_directory_uri() . '/js/jquery.mmenu.min.all.js', array( 'jquery'), false, true);
-   wp_enqueue_style( 'mmenu-css', get_stylesheet_directory_uri() . '/js/jquery.mmenu.all.css', false, false, false );
-   wp_enqueue_style( 'mmenu-iconbar', get_stylesheet_directory_uri() . '/js/jquery.mmenu.iconbar.css', false, false, false );
-   wp_enqueue_style( 'mmenu-widescreen', get_stylesheet_directory_uri() . '/js/jquery.mmenu.widescreen.css', false, false, 'all and (min-width: 900px)' );
+   wp_enqueue_script('mmenu', get_stylesheet_directory_uri() . '/mmenu/jquery.mmenu.min.all.js', array( 'jquery'), false, true);
+   wp_enqueue_style( 'mmenu-css', get_stylesheet_directory_uri() . '/mmenu/jquery.mmenu.all.css', false, false, false );
+   wp_enqueue_style( 'mmenu-iconbar', get_stylesheet_directory_uri() . '/mmenu/jquery.mmenu.iconbar.css', false, false, false );
+   wp_enqueue_style( 'mmenu-widescreen', get_stylesheet_directory_uri() . '/mmenu/jquery.mmenu.widescreen.css', false, false, 'all and (min-width: 900px)' );
    
 }
 add_action('wp_enqueue_scripts', 'custom_js_script');

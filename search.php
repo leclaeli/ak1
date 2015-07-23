@@ -12,16 +12,13 @@ get_header(); ?>
 	<section id="primary" class="content-area">
 		<main id="main" class="site-main" role="main">
 	
-			<?php 
-				// $query = new WP_Query( $args ); 
-			?>
-	
 			<?php /* Start the Loop */ 
 				$locations = array();
 	            $location_titles = array();
 	            $location_post_ids = array();
 	            $query_ids = array();
 	            // echo '<pre>'; print_r($query->request); echo '</pre>'; 
+	        
             ?>
 			
 			<?php while ( $query->have_posts() ) : $query->the_post(); ?>

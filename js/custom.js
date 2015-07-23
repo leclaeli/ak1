@@ -69,12 +69,6 @@
             }
         });
 
-// Accordion
-        // $( '#accordion li .collapsed' ).slideUp(1);
-        // $( '#accordion li a' ).click(function(e) {
-        //     $(e.target).siblings('.collapsed').slideToggle();
-        // });
-
 // submit forms
         $('.search-field').keyup(function(event) {
             /* Act on the event */
