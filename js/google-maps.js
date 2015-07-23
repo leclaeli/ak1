@@ -164,19 +164,27 @@ $(document).ready(function(){
         var onlyLatLng = $( this ).attr('data-lat') + ', ' + $( this    ).attr('data-lng');
         progLocation[index] = onlyLatLng;
     });
-
     calculateDistances();
 });
 
 // Calculate Distance - Distance Matrix Service
 // var origin1 = '<?php echo $user_address; ?>';
-var origin1 = 'Milwaukee, WI';
+
+$( '#autocomplete' ).focusout(function(event) {
+    /* Act on the event */
+    console.log('blurred');
+});
+
+function getOrigin() {
+    var origin1 = $( '#autocomplete' ).val();
+    return origin1;
+}
 
 function calculateDistances() {
   var service = new google.maps.DistanceMatrixService();
   service.getDistanceMatrix(
     {
-      origins: [origin1],
+      origins: [getOrigin()],
       destinations: progLocation,
       travelMode: google.maps.TravelMode.DRIVING,
       unitSystem: google.maps.UnitSystem.IMPERIAL,

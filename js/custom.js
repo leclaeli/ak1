@@ -4,6 +4,20 @@
             changeMonth: true,
             changeYear: true
         });
+
+        // $(function() {
+        //     $('.date-picker').datepicker( {
+        //         changeMonth: true,
+        //         changeYear: true,
+        //         showButtonPanel: true,
+        //         dateFormat: 'MM yy',
+        //         onClose: function(dateText, inst) { 
+        //             var month = $("#ui-datepicker-div .ui-datepicker-month :selected").val();
+        //             var year = $("#ui-datepicker-div .ui-datepicker-year :selected").val();
+        //             $(this).datepicker('setDate', new Date(year, month, 1));
+        //         }
+        //     });
+        // });
      
 // Programs list and map view slider (should be able to consolidate)
         $( '.asapkids-search-info' ).on('click', '#map-view:not(.clicked)', function(event) {
@@ -11,14 +25,14 @@
             /* Act on the event */
             $( this ).addClass('clicked');
 
-            $( '#programs-list' ).animate({
+            $( '#main' ).animate({
                 left: '-100%'
             }, 500, function() {
                 $(this).css('left', '150%');
-                $(this).appendTo('#container');
+                $(this).appendTo('#primary');
             });
 
-            $( '#programs-list' ).next().animate({
+            $( '#main' ).next().animate({
                 left: '0%'
             }, 500);
 
@@ -33,7 +47,7 @@
                 left: '-100%'
             }, 500, function() {
                 $(this).css( { 'left': '150%', } );
-                $(this).appendTo('#container');
+                $(this).appendTo('#primary');
             });
 
             $( '#programs-map' ).next().animate({
@@ -56,10 +70,10 @@
         });
 
 // Accordion
-        $( '#accordion li .collapsed' ).slideUp(1);
-        $( '#accordion li' ).click(function(e) {
-            $(e.target).children('.collapsed').slideToggle();
-        });
+        // $( '#accordion li .collapsed' ).slideUp(1);
+        // $( '#accordion li a' ).click(function(e) {
+        //     $(e.target).siblings('.collapsed').slideToggle();
+        // });
 
 // submit forms
         $('.search-field').keyup(function(event) {
@@ -70,40 +84,53 @@
         $('.search-form').submit(function(event) {
             /* Act on the event */
             event.preventDefault();
-            $( '#preferences' ).submit();
+            $( '.filter-preferences' ).submit();
         });
+
+// Sort based on distance
+        // $( '#sort-results' ).change(function(event) {
+        //     if ( $( this ).val() == "distance" ) {
+        //         var $programs = $( '#programs-list > ul' ),
+        //             $programsli = $programs.children( '.pinned' );
+        //         $programsli.sort(function(a,b){
+        //             var ad = parseInt( a.getAttribute('data-distance') ),
+        //                 bd = parseInt( b.getAttribute('data-distance') );
+        //                 console.log(ad + ' : ' + bd);
+        //             if(ad > bd) {
+        //                 return 1;
+        //             }
+        //             if(ad < bd) {
+        //                 return -1;
+        //             }
+        //             return 0;
+        //         });
+        //         $programsli.detach().prependTo( $programs );
+        //     } else {
+        //         $( '#sort-form' ).submit();
+        //     }
+        // });
+
+
+
+// mmenu
+
+        $("#my-menu").mmenu({
+            extensions: ["iconbar", "widescreen"],
+            slidingSubmenus: false,
+            navbar: {
+                add: true,
+            }
+        });
+
+
+
+    }); // End $(function)
+})(jQuery)
 
 // Count results (needs to run after google maps) - called from howFarIsIt() in google-maps.js
         function myLateFunction() {
             var totalResults = jQuery( '.program-list' ).filter(':visible').length;
             jQuery( '.total-results' ).text( totalResults );
-            sortDistance();
         }
-            
-// Sort based on distance
-        function sortDistance() {
-            console.log('sort distance');
-            var $programs = $( '#programs-list > ul' ),
-                $programsli = $programs.children( '.pinned' );
-
-            $programsli.sort(function(a,b){
-                var ad = a.getAttribute('data-distance'),
-                    bd = b.getAttribute('data-distance');
-
-                if(ad > bd) {
-                    return 1;
-                }
-                if(ad < bd) {
-                    return -1;
-                }
-                return 0;
-            });
-
-            $programsli.detach().appendTo($programs);
-        }
-        
-
-    }); // End $(function)
-})(jQuery)
 
 

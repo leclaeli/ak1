@@ -117,9 +117,10 @@ function create_my_post_types() {
     register_post_type(
         'cpt_organization',
         array(
-            'public' => false,
+            'public' => true,
             'show_ui' => true,
             'label' => 'Organizations',
+            'has_archive' => true,
         )
     );
 

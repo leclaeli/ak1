@@ -42,31 +42,42 @@
      *
      */
 
+    $paged = (get_query_var('paged')) ? get_query_var('paged') : 1;
     $args = array(
         'posts_per_page' => -1,
         'post_type' => 'cpt_program',
+        'paged' => $paged,
+        //'post__not_in' => $expired_posts,
         's' => $s,
         'meta_query' => array(
+            'featured' => array(
+                'key' => 'prog_featured', // {$wpdb->postmeta}
+            ),
+            'start_date' => array(
+                'key' => 'prog_date_start',
+            ),
+            'ongoing' => array(
+                'key' => 'prog_ongoing',
+            ),
             array(
-            'relation' => 'OR',
-                array (
-                    'key' => 'prog_ongoing',
-                    'value' => true,
-                    'compare' => '=',
-                ),
-                   
+                'relation' => 'OR',
                 array (
                     'key' => 'prog_date_start',
                     'value' => date('Ymd'),
                     'compare' => '>=',
                 ),
+                array (
+                    'key' => 'prog_ongoing',
+                    'value' => true,
+                    'compare' => '=',
+                ),
             ),
         ),
-        'meta_key' => $key,
-        'orderby' => $order_by,
-        'order'   => $order,
-        'meta_type' => $type,
     );
+
+    if ( $sr == "price" ) {
+        array_push( $args['meta_query'], array( 'key' => 'prog_cost', 'type' => 'NUMERIC') );
+    }
 
     if (!empty( $age )) {
         array_push($args['meta_query'],  array (
@@ -162,5 +173,35 @@
         array_push( $args['meta_query'], $exp_levels );
     }
 
+    add_filter( 'posts_orderby', $func = function ( $orderby, $query ) {
+        $start_date = date('Ymd');
+        global $wpdb;
+        $sr = get_query_var( 'sr' ); // sort results
+        if ($sr == "title_az" ) {
+            $orderby = 'wp_posts.post_title ASC';
+        } elseif  ($sr == "title_za" ) {
+            $orderby = 'wp_posts.post_title DESC';
+        } elseif  ($sr == "date" ) {
+            $orderby = 'mt1.meta_value ASC';
+        } elseif  ($sr == "price" ) {
+            $orderby = 'CAST(mt3.meta_value AS SIGNED) ASC';
+        } else {
+            $orderby = $wpdb->prepare(
+                "
+                CASE
+                    WHEN {$wpdb->postmeta}.meta_value THEN CONCAT('A', mt1.meta_value)
+                    WHEN mt1.meta_value >= %d THEN CONCAT('B', mt1.meta_value)
+                    WHEN mt2.meta_value AND mt1.meta_value THEN CONCAT('C', mt1.meta_value)
+                    WHEN mt2.meta_value THEN 'D'
+                    ELSE 'Es'
+                END ASC
+                "
+                , $start_date
+            );
+        }
+        return $orderby;
+    }, 10, 2 );
+    $query = new WP_Query( $args );
 
+    remove_filter( 'posts_orderby', $func, 10, 2 );
 ?>
