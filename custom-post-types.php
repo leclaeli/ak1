@@ -70,11 +70,11 @@
 
 function create_my_post_types() {
     register_post_type(
-        'cpt_child',
+        'cpt_student',
         array(
-            'public' => true,
+            'public' => false,
             'show_ui' => true,
-            'label' => 'Children',
+            'label' => 'Students',
             // 'capability_type' => 'child',
             // 'capabilities' => array(
             //     'publish_posts' => 'publish_childs',
@@ -87,7 +87,7 @@ function create_my_post_types() {
             //     'delete_post' => 'delete_child',
             //     'read_post' => 'read_child',
             // ),
-            'supports' => array('author','title'),
+            'supports' => array( '' ),
         )
     );
 
@@ -97,7 +97,7 @@ function create_my_post_types() {
             'public' => false,
             'show_ui' => true,
             'label' => 'Interests',
-            'taxonomies' => array('category'),
+            'taxonomies' => array('interest_type'),
             // 'capability_type' => 'interest',
             // 'capabilities' => array(
             //     'publish_posts' => 'publish_interests',
@@ -110,7 +110,7 @@ function create_my_post_types() {
             //     'delete_post' => 'delete_interest',
             //     'read_post' => 'read_interest',
             // ),
-            'supports' => array('thumbnail', 'title'),
+            'supports' => array( 'title' ),
         )
     );
 
@@ -130,7 +130,6 @@ function create_my_post_types() {
             'public' => true,
             'show_ui' => true,
             'label' => 'Programs',
-            'taxonomies' => array('category'),
             'supports' => array( 'title', 'editor', 'thumbnail' ),
             'has_archive' => true,
         )
@@ -138,3 +137,17 @@ function create_my_post_types() {
 }
 
 add_action( 'init', 'create_my_post_types' );
+
+function asapkids_interests_taxonomy() {
+    register_taxonomy(
+        'interest_type',
+        'cpt_interest',
+        array(
+            'label' => __( 'Type' ),
+            'rewrite' => array( 'slug' => 'type' ),
+            'hierarchical' => true,
+        )
+    );
+}
+
+add_action( 'init', 'asapkids_interests_taxonomy' );

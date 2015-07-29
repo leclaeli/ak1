@@ -1,4 +1,4 @@
-( function( $ ) {
+(function($){
 
 	/*
 	*  render_map
@@ -48,7 +48,6 @@
 	    $( '#map-view' ).one( "click", function(event) {
 	        centerMarkerLabels();
 	    });
-	    
 	}
 
 	/*
@@ -159,8 +158,17 @@
 	        var onlyLatLng = $( this ).attr('data-lat') + ', ' + $( this    ).attr('data-lng');
 	        progLocation[index] = onlyLatLng;
 	    });
-	    calculateDistances();
-	  
+	    function isEmpty( el ){
+		    return !$.trim( el.html() )
+		}
+		if ( isEmpty( $('#autocomplete') ) ) {
+		    $('.acf-map').each(function() {
+	        	render_map( $(this) );
+	    	});
+	    	myLateFunction();
+		} else {
+			calculateDistances();
+		}
 	});
 
     // Calculate Distance - Distance Matrix Service
@@ -176,6 +184,8 @@
 
 	function getOrigin() {
 	    var origin1 = $( '#autocomplete' ).val();
+	    //RDK DEV 20150723: hard-setting for now, need to pull location dynamically
+	    //var origin1 = 'Milwaukee, WI';
 	    return origin1;
 	}
 
@@ -189,7 +199,7 @@
 	      unitSystem: google.maps.UnitSystem.IMPERIAL,
 	      avoidHighways: false,
 	      avoidTolls: false
-	    }, callback);
+	    }, callback );
 	}
 
 	function callback(response, status) {
@@ -213,7 +223,7 @@
 	                + ': ' + results[j].distance.text + ' in '
 	                + results[j].duration.text + '<br>';
 	                document.getElementsByClassName('program-list pinned')[j].setAttribute("data-distance", results[j].distance.value );
-	                document.getElementsByClassName('distance pinned')[j].innerHTML = "Distance: " + results[j].distance.text;
+	                document.getElementsByClassName('distance pinned')[j].innerHTML = results[j].distance.text;
 	            }
 	        }
 	        howFarIsIt();
@@ -234,14 +244,14 @@
 	        // render the map
 	    });
 
-	    $('.acf-map').each(function(){
+	    $('.acf-map').one.each(function(){
 	        render_map( $(this) );
 	    });
 	    myLateFunction();
-	}
+	}    
      
 // Programs list and map view slider (should be able to consolidate)
-        $( '.asapkids-search-info' ).on('click', '#map-view:not(.clicked)', function(event) {
+	$( '.asapkids-search-info' ).on('click', '#map-view:not(.clicked)', function(event) {
             event.preventDefault();
             /* Act on the event */
             $( this ).addClass('clicked');
@@ -276,65 +286,33 @@
             }, 500);
 
             $( '#map-view' ).removeClass('clicked');
-        });
-        
-// AJAX Test
-        $.ajax({
-            url: ak_localize.ajax_url,
-            type: 'post',
-            data: {
-                action: 'post_love_add_love',
-                post_id: 'Great to be AJAXED', 
-            },
-            success: function( response ) {
-            }
-        });
+        });       
 
-// submit forms
-        $('.search-field').keyup(function(event) {
-            /* Act on the event */
-            var fieldText = $( this ).val();
-            $( '#filter-search' ).val( fieldText );
-        });
-        $('.search-form').submit(function(event) {
-            /* Act on the event */
-            event.preventDefault();
-            $( '.filter-preferences' ).submit();
-        });
+    // }); // End $(function)
+    
 
-// Sort based on distance
-        // $( '#sort-results' ).change(function(event) {
-        //     if ( $( this ).val() == "distance" ) {
-        //         var $programs = $( '#programs-list > ul' ),
-        //             $programsli = $programs.children( '.pinned' );
-        //         $programsli.sort(function(a,b){
-        //             var ad = parseInt( a.getAttribute('data-distance') ),
-        //                 bd = parseInt( b.getAttribute('data-distance') );
-        //                 console.log(ad + ' : ' + bd);
-        //             if(ad > bd) {
-        //                 return 1;
-        //             }
-        //             if(ad < bd) {
-        //                 return -1;
-        //             }
-        //             return 0;
-        //         });
-        //         $programsli.detach().prependTo( $programs );
-        //     } else {
-        //         $( '#sort-form' ).submit();
-        //     }
-        // });
+	// submit forms
+    $('.search-field').keyup(function(event) {
+        /* Act on the event */
+        var fieldText = $( this ).val();
+        $( '#filter-search' ).val( fieldText );
+    });
+    $('.search-form').submit(function(event) {
+        /* Act on the event */
+        event.preventDefault();
+        $( '.filter-preferences' ).submit();
+    });
 
-// document ready
+	// document ready
 	$(function() {
 
-	// datepicker
+		// datepicker
 		$( "#datepicker" ).datepicker({
             changeMonth: true,
             changeYear: true
         });
 
-	// mmenu
+		// mmenu
         $( "#my-menu" ).mmenu({
             extensions: ["iconbar", "widescreen"],
             slidingSubmenus: false,
@@ -345,49 +323,132 @@
 
     }); // end $( function() {} )
 
-
-// This example displays an address form, using the autocomplete feature
-// of the Google Places API to help users fill in the information.
-	var placeSearch, autocomplete;
-	var componentForm = {
-		street_number: 'short_name',
-		route: 'long_name',
-		locality: 'long_name',
-		administrative_area_level_1: 'short_name',
-		country: 'long_name',
-		postal_code: 'short_name'
-	};
-
-	function initialize() {
-	// Create the autocomplete object, restricting the search
-	// to geographical location types.
-	autocomplete = new google.maps.places.Autocomplete(
-		/** @type {HTMLInputElement} */(document.getElementById('autocomplete')),
-		{ types: ['geocode'] });
-	}
-
-	// [START region_geolocation]
-	// Bias the autocomplete object to the user's geographical location,
-	// as supplied by the browser's 'navigator.geolocation' object.
-	function geolocate() {
-	  if (navigator.geolocation) {
-		navigator.geolocation.getCurrentPosition(function(position) {
-		  var geolocation = new google.maps.LatLng(
-			  position.coords.latitude, position.coords.longitude);
-		  var circle = new google.maps.Circle({
-			center: geolocation,
-			radius: position.coords.accuracy
-		  });
-		  autocomplete.setBounds(circle.getBounds());
-		});
-	  }
-	}
-	// [END region_geolocation]
-
-// Count results (needs to run after google maps) - called from howFarIsIt() in google-maps.js
+	// Count results (needs to run after google maps) - called from howFarIsIt() in google-maps.js
     function myLateFunction() {
         var totalResults = $( '.program-list' ).filter(':visible').length;
         $( '.total-results' ).text( totalResults );
     }
+    
+})(jQuery)
+
+jQuery( document ).ready(function($) {
+	initialize();
+	var API = $("#my-menu").data( "mmenu" );
+	// This will fire when document is ready:
+    $(window).resize(function() {
+        // This will fire each time the window is resized:
+        if( $(window).width() >= 915 ) {
+        	$( "body" ).addClass( 'ak-opened-menu' ).removeClass( 'ak-closed-menu' );
+   			// $( "#hamburger" ).click(function(event) {
+			// $( "body" ).toggleClass( 'ak-opened-menu ak-closed-menu' );
+			// });
+
+			$( "#my-menu" ).on( "click", "#hamburger", function() {
+				$( "body" ).toggleClass( 'ak-opened-menu ak-closed-menu' );
+				console.log( 'on' );
+			});
+
+
+				$( "#hamburger" ).click(function(event) {	
+					API.closeAllPanels();
+				});
+
+			
+			
+			$( ".mm-vertical > li" ).not(':eq(0)').click(function() {
+				if ( $( 'body' ).hasClass( 'ak-closed-menu' ) ) {
+					console.log('closed menu');
+					$( "body" ).removeClass( 'ak-closed-menu' ).addClass( 'ak-opened-menu' );
+				}
+			});
+            
+        } else {
+            //console.log('< 900');
+            $( "body" ).removeClass( 'ak-opened-menu ak-closed-menu' );
+      		
+			$( ".mm-vertical > li" ).click(function() {
+				API.open();
+			});
+
+			$( "#hamburger" ).click(function() {
+				API.close();
+				API.closeAllPanels();
+			});
+            
+        } 
+
+    }).resize(); // This will simulate a resize to trigger the initial run.
 	
-} )( jQuery );
+	$( ".interest-title" ).click(function(event) {
+		$( this ).next( ".hide-interests" ).slideToggle();
+	});
+
+});
+
+
+// This example displays an address form, using the autocomplete feature
+// of the Google Places API to help users fill in the information.
+
+var placeSearch, autocomplete;
+var componentForm = {
+  street_number: 'short_name',
+  route: 'long_name',
+  locality: 'long_name',
+  administrative_area_level_1: 'short_name',
+  country: 'long_name',
+  postal_code: 'short_name'
+};
+
+function initialize() {
+  // Create the autocomplete object, restricting the search
+  // to geographical location types.
+  autocomplete = new google.maps.places.Autocomplete(
+	  /** @type {HTMLInputElement} */(document.getElementById('autocomplete')),
+	  { types: ['geocode'] });
+  // When the user selects an address from the dropdown,
+  // populate the address fields in the form.
+  google.maps.event.addListener(autocomplete, 'place_changed', function() {
+	//fillInAddress();
+  });
+}
+
+// [START region_fillform]
+function fillInAddress() {
+  // Get the place details from the autocomplete object.
+  var place = autocomplete.getPlace();
+
+  for (var component in componentForm) {
+	document.getElementById(component).value = '';
+	document.getElementById(component).disabled = false;
+  }
+
+  // Get each component of the address from the place details
+  // and fill the corresponding field on the form.
+  for (var i = 0; i < place.address_components.length; i++) {
+	var addressType = place.address_components[i].types[0];
+	if (componentForm[addressType]) {
+	  var val = place.address_components[i][componentForm[addressType]];
+	  document.getElementById(addressType).value = val;
+	}
+  }
+}
+// [END region_fillform]
+
+// [START region_geolocation]
+// Bias the autocomplete object to the user's geographical location,
+// as supplied by the browser's 'navigator.geolocation' object.
+function geolocate() {
+  if (navigator.geolocation) {
+	navigator.geolocation.getCurrentPosition(function(position) {
+	  var geolocation = new google.maps.LatLng(
+		  position.coords.latitude, position.coords.longitude);
+	  var circle = new google.maps.Circle({
+		center: geolocation,
+		radius: position.coords.accuracy
+	  });
+	  autocomplete.setBounds(circle.getBounds());
+	});
+  }
+}
+// [END region_geolocation]
+

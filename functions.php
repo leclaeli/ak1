@@ -118,7 +118,7 @@ function asapkids_scripts() {
 
 	wp_enqueue_script( 'asapkids-skip-link-focus-fix', get_template_directory_uri() . '/js/skip-link-focus-fix.js', array(), '20130115', true );
 	
-	wp_enqueue_script( 'asapkids-jquery-functions', get_template_directory_uri() . '/js/functions.js', array(), '20130115', true );
+	//wp_enqueue_script( 'asapkids-jquery-functions', get_template_directory_uri() . '/js/functions.js', array(), '20130115', true );
 
 	if ( is_singular() && comments_open() && get_option( 'thread_comments' ) ) {
 		wp_enqueue_script( 'comment-reply' );
@@ -214,8 +214,12 @@ class Location {
 
 // Enqueue Scripts
 function custom_js_script() {
-    wp_enqueue_script('google-maps-api', 'https://maps.googleapis.com/maps/api/js?v=3.exp&signed_in=true&libraries=places', array(), false, true);    
+    if ( !is_page_template( 'update-child.php' ) ) {
+        wp_enqueue_script('google-maps-api', 'https://maps.googleapis.com/maps/api/js?v=3.exp&signed_in=true&libraries=places', array(), false, true);    
+    }
+    // wp_enqueue_script('google-maps', get_stylesheet_directory_uri() . '/js/google-maps.js', array( 'jquery'), false, true);
     wp_enqueue_script( 'asapkids-jquery-functions', get_template_directory_uri() . '/js/functions.js', array(), '20130115', true );
+    //wp_enqueue_script('custom-script', get_stylesheet_directory_uri() . '/js/custom.js', array( 'jquery', 'google-maps'), false, false);
     wp_enqueue_script('marker-with-label', get_stylesheet_directory_uri() . '/js/markerwithlabel_packed.js', array(), false, true);
     wp_enqueue_script('jquery-ui-datepicker');	 
     wp_enqueue_style('plugin_name-admin-ui-css', 'https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.21/themes/smoothness/jquery-ui.css', false, false, false );
@@ -225,10 +229,10 @@ function custom_js_script() {
         'user_address' => get_query_var( 'addy' ),
     ) );
     //mmenu
-   wp_enqueue_script('mmenu', get_stylesheet_directory_uri() . '/mmenu/jquery.mmenu.min.all.js', array( 'jquery'), false, true);
-   wp_enqueue_style( 'mmenu-css', get_stylesheet_directory_uri() . '/mmenu/jquery.mmenu.all.css', false, false, false );
-   wp_enqueue_style( 'mmenu-iconbar', get_stylesheet_directory_uri() . '/mmenu/jquery.mmenu.iconbar.css', false, false, false );
-   wp_enqueue_style( 'mmenu-widescreen', get_stylesheet_directory_uri() . '/mmenu/jquery.mmenu.widescreen.css', false, false, 'all and (min-width: 900px)' );
+    wp_enqueue_script('mmenu', get_stylesheet_directory_uri() . '/mmenu/jquery.mmenu.min.all.js', array( 'jquery'), false, true);
+    wp_enqueue_style( 'mmenu-css', get_stylesheet_directory_uri() . '/mmenu/jquery.mmenu.all.css', false, false, false );
+    wp_enqueue_style( 'mmenu-iconbar', get_stylesheet_directory_uri() . '/mmenu/jquery.mmenu.iconbar.css', false, false, false );
+    wp_enqueue_style( 'mmenu-widescreen', get_stylesheet_directory_uri() . '/mmenu/jquery.mmenu.widescreen.css', false, false, 'all and (min-width: 915px)' );
    
 }
 add_action('wp_enqueue_scripts', 'custom_js_script');
@@ -404,7 +408,7 @@ function asapkids_login_member() {
 				if(!wp_check_password($_POST['asapkids_user_pass'], $user->user_pass, $user->ID)) {
 					// if the password is incorrect for the specified user
 					asapkids_errors()->add('empty_password', __('Incorrect password'));
-				}		
+				}
 			}
 		}	
  

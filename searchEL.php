@@ -12,29 +12,30 @@ get_header(); ?>
 	<section id="primary" class="content-area">
 		<main id="main" class="site-main" role="main">
 	
-			<?php  
+			<?php /* Start the Loop */ 
 				$locations = array();
-			    $location_titles = array();
-			    $location_post_ids = array();
-			    $query_ids = array();
-			    // echo '<pre>'; print_r($query->request); echo '</pre>'; 
-			?>
+	            $location_titles = array();
+	            $location_post_ids = array();
+	            $query_ids = array();
+	            // echo '<pre>'; print_r($query->request); echo '</pre>'; 
+	        
+            ?>
+			
+			<?php while ( $query->have_posts() ) : $query->the_post(); ?>
 
-			<?php /* Start the Loop */ ?>
+				<?php 
+					$loc = new Location(); // class in functions.php
+	                $prog_id = get_the_id();
+	                array_push( $locations, $loc->my_location );
+	                array_push( $query_ids, $prog_id );
+	                $pinned = $loc->has_loc;
+	                $classes = array(
+	                	'program-list',
+	                	$pinned,
+	                );
+				?>
 			
-			<?php while ( $query->have_posts() ) : $query->the_post();
-				$loc = new Location(); // class in functions.php
-                $prog_id = get_the_id();
-                array_push( $locations, $loc->my_location );
-                array_push( $query_ids, $prog_id );
-                $pinned = $loc->has_loc;
-                $classes = array(
-                	'program-list',
-                	$pinned,
-                );
-			?>			
-			
-				<article id="post-<?php the_ID(); ?>" <?php post_class( $classes ); ?>  class="program-list<?php echo $loc->has_loc; ?>">
+				<article id="post-<?php the_ID(); ?>" <?php post_class( $classes ); ?>  class="program-list<?php echo $loc->has_loc; ?>" >
 					
 					<?php 
 						$current_user = wp_get_current_user();
@@ -63,7 +64,7 @@ get_header(); ?>
 								$dist = rad2deg($dist);
 								$miles = $dist * 60 * 1.1515;
 							}
-						} 	
+						}   	
 				
 				
 						$org_id = get_field('prog_organization')[0]->ID;		
@@ -75,10 +76,12 @@ get_header(); ?>
 						$location = get_field('prog_location');
 						$level = get_field('prog_activity_level');
 						$days_offered = get_field( 'prog_days_offered' );
-						$featured_prog = get_field( 'prog_featured' )
+						$featured_prog = get_field( 'prog_featured' );
+
 					?>	
 					
 					<div class="asapkids-search-result-container">
+						
 						<?php if ( has_post_thumbnail() ) { ?>
 							<div class="asapkids-search-content-right">
 								<?php the_post_thumbnail('medium'); ?>
@@ -87,11 +90,11 @@ get_header(); ?>
 						
 						<div class="asapkids-search-content-left">
 							<header class="entry-header">
-								<?php the_title( sprintf( '<h1 class="entry-title"><a href="%s" rel="bookmark">', esc_url( get_permalink() ) ), '</a></h1>' ); ?>
+								<?php the_title( sprintf( '<h1 class="entry-title"><i class="fa fa-trophy"></i><a href="%s" rel="bookmark">', esc_url( get_permalink() ) ), '</a></h1>' ); ?>
 								<?php if ( $featured_prog ) {
 										echo "Featured";
 									} 
-								?>								
+								?>
 							</header><!-- .entry-header -->
 						
 							<div class="entry-summary">
@@ -109,14 +112,13 @@ get_header(); ?>
 												endif;
 											endif; 
 									?>
-										<li><img src="<?php echo get_template_directory_uri().'/images/target.png'; ?>" width="40" height="40"><span>Age(s) 
+										<li><i class="fa fa-bullseye"></i>Age(s) 
 										<?php 
 											echo $age_start; 
 											if( $age_append ) :
 												echo $age_append;
 											endif;
 										?>
-										</span>
 										</li>
 									<?php endif; ?>
 				
@@ -132,43 +134,36 @@ get_header(); ?>
 											endif;
 									?>
 										
-											<li><img src="<?php echo get_template_directory_uri().'/images/date-black.png'; ?>" width="40" height="40"><span>
+											<li><i class="fa fa-calendar"></i>
 											<?php 
 												echo date("m/d/y", strtotime($date_start)); 
 												if( $date_append ) :
 													echo $date_append;
 												endif;
 											?>
-											</span>
 											</li>
 									<?php endif; ?>
 					
 									<?php if( $cost ) : ?> 
-										<li><img src="<?php echo get_template_directory_uri().'/images/price-black.png'; ?>" width="40" height="40"><span><?php echo money_format('$%i', $cost); ?></span></li>
+										<li><i class="fa fa-money"></i><?php echo money_format('$%i', $cost); ?></li>
 									<?php endif; ?>
-							
-									<?php if( $location ) : ?>
-										<li><img src="<?php echo get_template_directory_uri().'/images/location-black.png'; ?>" width="40" height="40"><span class="distance <?php echo $loc->has_loc; ?>"><?php echo $location['address']; ?></span></li>	
-									<?php else : ?>
-										<li><img src="<?php echo get_template_directory_uri().'/images/location-black.png'; ?>" width="40" height="40"><span class="distance <?php echo $loc->has_loc; ?>">Contact organization for location.</span></li>	
+									
+									<?php if( $location && $user_address && $lat && $lng ) : ?>
+										<li><i class="fa fa-map-marker"></i><?php echo round($miles, 2) . ' miles'; ?></li>
 									<?php endif; ?>
-		
-									<?php //if( $location && $user_address && $lat && $lng ) : ?>
-										<!--<li><img src="--><?php //echo get_template_directory_uri().'/images/location-black.png'; ?><!--" width="40" height="40"><span>--><?php //echo round($miles, 2) . ' miles'; ?><!--</span></li>-->
-									<?php //endif; ?>
 									
 									<?php if( $level ) : ?>
-										<li><img src="<?php echo get_template_directory_uri().'/images/experience-black.png'; ?>" width="40" height="40"><span><?php echo implode( ", ", $level ); ?></span></li>
+										<li><i class="fa fa-star-o"></i><?php echo implode( ", ", $level ); ?></li>
 									<?php endif; ?>
-									<!--<li>Days:--> <?php //echo implode( ", ", $days_offered ); ?> <!--</li>-->
-																	
+									<li>Days: <?php echo implode( ", ", $days_offered ); ?> </li>
+									<li class="distance <?php echo $loc->has_loc; ?>">Distance: Contact organization for location.</li>
 								</ul>
 								
 								<div class="asapkids-program-details-button"><a href="<?php echo esc_url(get_permalink()); ?>">See Event Details</a></div>
 							</div><!-- .entry-summary -->
 							
 							<footer class="entry-footer">
-								<?php asapkids_entry_footer(); ?>
+								<?php // asapkids_entry_footer(); ?>
 							</footer><!-- .entry-footer -->
 						</div>
 						<div class="asapkids-clear"></div>
@@ -180,29 +175,41 @@ get_header(); ?>
 				endwhile; 
 				/* Restore original Post Data */
 				wp_reset_query();
-			?>		
 
+			?>
+
+			
+			<?php
+			// $myargs = array( 'post_type' => 'cpt_program', 'posts_per_page' => -1, );
+			// $myposts = get_posts( $myargs );
+			// foreach ( $myposts as $post ) : setup_postdata( $post ); 
+			// update_field( 'field_55a94417b117a', 0, $post->ID );
+			// endforeach; 
+			// wp_reset_postdata();
+			?>
+		    
 		</main><!-- #main -->
-
-		<div id="programs-map" class="acf-map box">
-		    <?php
-		    $i = 0;
-		        foreach ( $locations as $location ) { 
-		            if ( $location != NULL ) {?>
-		            <div id="<?php echo $location_post_ids[$i]; ?>" class="marker" data-lat="<?php echo $location['lat']; ?>" data-lng="<?php echo $location['lng']; ?>">
-		                <p class="program-name"><?php echo $location_titles[$i]; ?></p>
-		                <p class="address"><?php echo $location['address']; ?></p>
-		            </div>
-		            <?php 
-		            }
-		            $i++;
-		         }
-		    ?>
-	    </div>		
 		
+			<div id="programs-map" class="acf-map box">
+			    <?php
+			    $i = 0;
+			        foreach ( $locations as $location ) { 
+			            if ( $location != NULL ) {?>
+			            <div id="<?php echo $location_post_ids[$i]; ?>" class="marker" data-lat="<?php echo $location['lat']; ?>" data-lng="<?php echo $location['lng']; ?>">
+			                <p class="program-name"><?php echo $location_titles[$i]; ?></p>
+			                <p class="address"><?php echo $location['address']; ?></p>
+			            </div>
+			            <?php 
+			            }
+			            $i++;
+			         }
+			    ?>
+		    </div>
+	    
+	    
 	</section><!-- #primary -->
 	<div id="content-pane">
-	    <div id="outputDiv"></div>
-	</div>	
+		    <div id="outputDiv"></div>
+		</div>
 
 <?php get_footer(); ?>

@@ -47,7 +47,6 @@
         'posts_per_page' => -1,
         'post_type' => 'cpt_program',
         'paged' => $paged,
-        //'post__not_in' => $expired_posts,
         's' => $s,
         'meta_query' => array(
             'featured' => array(
@@ -63,6 +62,11 @@
                 'relation' => 'OR',
                 array (
                     'key' => 'prog_date_start',
+                    'value' => date('Ymd'),
+                    'compare' => '>=',
+                ),
+                array (
+                    'key' => 'prog_date_expires',
                     'value' => date('Ymd'),
                     'compare' => '>=',
                 ),
@@ -184,7 +188,7 @@
         } elseif  ($sr == "date" ) {
             $orderby = 'mt1.meta_value ASC';
         } elseif  ($sr == "price" ) {
-            $orderby = 'CAST(mt3.meta_value AS SIGNED) ASC';
+            $orderby = 'CAST(mt4.meta_value AS SIGNED) ASC';
         } else {
             $orderby = $wpdb->prepare(
                 "
@@ -193,7 +197,7 @@
                     WHEN mt1.meta_value >= %d THEN CONCAT('B', mt1.meta_value)
                     WHEN mt2.meta_value AND mt1.meta_value THEN CONCAT('C', mt1.meta_value)
                     WHEN mt2.meta_value THEN 'D'
-                    ELSE 'Es'
+                    ELSE 'E'
                 END ASC
                 "
                 , $start_date
