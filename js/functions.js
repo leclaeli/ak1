@@ -161,6 +161,7 @@
 	    function isEmpty( el ){
 		    return !$.trim( el.html() )
 		}
+		$( "#autocomplete" ).val( get_user_location.address );
 		if ( isEmpty( $('#autocomplete') ) ) {
 		    $('.acf-map').each(function() {
 	        	render_map( $(this) );
@@ -184,8 +185,7 @@
 
 	function getOrigin() {
 	    var origin1 = $( '#autocomplete' ).val();
-	    //RDK DEV 20150723: hard-setting for now, need to pull location dynamically
-	    //var origin1 = 'Milwaukee, WI';
+	    console.log('address: '+origin1);
 	    return origin1;
 	}
 

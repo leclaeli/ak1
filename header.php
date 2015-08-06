@@ -19,6 +19,19 @@
 </head>
 
 <body <?php body_class(); ?>>
+
+<?php 
+
+/*** RDK 2015072901: testing code to load student profiles as default filters ***/
+
+if(is_user_logged_in()) {
+	$user = wp_get_current_user();
+	
+	$args = array('post_type' => 'cpt_student', 'post_status' => 'private', 'author' => $user->ID, 'orderby' => 'title', 'order' => 'ASC');
+	$students = get_posts($args);
+}
+
+?>
 <div id="page" class="hfeed site">
 	<a class="skip-link screen-reader-text" href="#content"><?php esc_html_e( 'Skip to content', 'asapkids' ); ?></a>
 
@@ -31,15 +44,22 @@
 			</li>
 			<li>
 				<span>
-					<img src="<?php echo get_template_directory_uri(); ?>/images/child.png" />
+					<img src="<?php echo get_template_directory_uri(); ?>/images/student.png" />
 					Student
 				</span>
 				<ul>
-					<select name="st" id="select-student">
-						<option></option>
-						<option value="student1">Student 1</option>
-						<option value="student2">Student 2</option>
-					</select>
+					<?php if(is_user_logged_in()) { ?>
+						<select name="st" id="select-student">
+							<?php if($students) {
+								foreach($students as $id) {
+									$student_name = get_field('student_name', $id->ID);
+									echo '<option value="'.$id->ID.'">'.get_field('student_name', $id->ID).'</option>';
+								}
+							} ?>
+						</select>
+					<?php } else {
+						echo 'No student profiles exist, want to <a href="'.home_url('/add-student').'">create one</a>?';
+					} ?>
 				</ul>
 			</li>
 	
@@ -70,9 +90,17 @@
 					<img src="<?php echo get_template_directory_uri(); ?>/images/birthdate.png" />
 					Age
 				</span>
+				<?php if(isset($_GET['st'])) {
+					$birthday = get_field('student_date_of_birth', $_GET['st']);
+					$from = new DateTime($birthday);
+					$to   = new DateTime('today');
+					$age  = $from->diff($to)->y;
+				} else {
+					$age = '';
+				} ?>				
 				<ul>
 					<li>
-						<input type="number" name="age" id="age" min="4" max="19" >
+						<input type="number" name="age" id="age" min="4" max="19" value="<?php echo $age ?>">
 					</li>
 				</ul>
 			</li>
@@ -80,8 +108,7 @@
 			<li>
 				<span>
 				   <img src="<?php echo get_template_directory_uri(); ?>/images/price.png" />
-					Price<br />
-					<!-- <small>Garcia</small> -->
+					Price
 				</span>
 				<ul>
 				 	<li>
@@ -138,20 +165,8 @@
 					<img src="<?php echo get_template_directory_uri(); ?>/images/favorite.png" />
 					Interests
 				</span>
-				
-						<!-- <select multiple name="ai[]" id="select-ai">
-				            <?php 
-				            global $post; 
-				            $interest_args = array( 'numberposts' => -1, 'post_type' => 'cpt_interest', 'orderby' => 'title', 'order' => 'ASC' ); 
-				            $interest_posts = get_posts($interest_args);
-				            foreach( $interest_posts as $post ) : setup_postdata($post); ?>
-				                <option value="<? echo $post->ID; ?>"><?php the_title(); ?></option> 
-				            <?php endforeach; 
-				            wp_reset_postdata();
-				            ?>
-			        	</select> -->
-                        
-                <div>
+
+				<div>
                     <?php 
                         $customPostTaxonomies = get_object_taxonomies('cpt_interest');
 
@@ -172,15 +187,15 @@
                             }
                             foreach ( $categories as $category ) {
 
-                                $has_interest_args = array(
-                                    'post_type' => 'cpt_program',
+                                /*$has_interest_args = array(
+                                    'post_type' = 'cpt_program',
                                     'meta_query' => array(
                                         'key' => 'associated_interests',
                                         'value' => '"' . $category->cat_ID . '"',
                                         'compare' => 'LIKE'
                                     )
-                                );
-                                $has_interest = get_posts( $has_interest_args );
+                                )
+                                $has_interest = get_posts( $has_interest_args );*/
 
                                 echo '<div class="interest-container"><a class="interest-title">' . $category->name . '</a>';
                                 global $post; 
@@ -210,7 +225,8 @@
                         }
                     ?>
 	        	</div>
-	        </li>
+		    </li>
+
 	        <li><input type="hidden" name="s" id="filter-search" value="<?php echo get_search_query(); ?>" /></li>
 	        <li><input id="view-results" type="submit" value="Apply Filters"></li>
 	   </ul>
