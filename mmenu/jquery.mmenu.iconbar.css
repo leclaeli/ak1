@@ -13,9 +13,9 @@ body {
 
 .mm-slideout {
   box-sizing: border-box;
-  padding-right: 140px;
-  -webkit-transform: translate3d(80px, 0, 0);
-  -moz-transform: translate3d(80px, 0, 0);
-  -ms-transform: translate3d(80px, 0, 0);
-  -o-transform: translate3d(80px, 0, 0);
-  transform: translate3d(80px, 0, 0); }
+  padding-right: 60px;
+  -webkit-transform: translate3d(60px, 0, 0);
+  -moz-transform: translate3d(60px, 0, 0);
+  -ms-transform: translate3d(60px, 0, 0);
+  -o-transform: translate3d(60px, 0, 0);
+  transform: translate3d(60px, 0, 0); }

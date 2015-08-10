@@ -33,9 +33,7 @@
             $order = 'ASC';
             $order_by = 'prog_date_start';
     }
-?>
 
-<?php 
     /**
      * The WordPress Query class.
      * @link http://codex.wordpress.org/Function_Reference/WP_Query
@@ -69,7 +67,7 @@
                     'key' => 'prog_date_expires',
                     'value' => date('Ymd'),
                     'compare' => '>=',
-                ),
+                ),                
                 array (
                     'key' => 'prog_ongoing',
                     'value' => true,
@@ -126,19 +124,19 @@
         array_push( $args['meta_query'], $days );
     }
 
-    if (!empty( $activity_level )) {
-        $i = 0;
-        $levels['relation'] = 'OR';
-        foreach ( $activity_level as $level ) {
-            $levels[$i] = array(
-                'key' => 'prog_activity_level',
-                'value' => '"' . $level . '"',
-                'compare' => 'LIKE'
-            );
-            $i++;
-        }
-        array_push( $args['meta_query'], $levels );
-    }
+    // if (!empty( $experience )) {
+    //     $i = 0;
+    //     $levels['relation'] = 'OR';
+    //     foreach ( $experience as $level ) {
+    //         $levels[$i] = array(
+    //             'key' => 'prog_experience',
+    //             'value' => '"' . $level . '"',
+    //             'compare' => 'LIKE'
+    //         );
+    //         $i++;
+    //     }
+    //     array_push( $args['meta_query'], $levels );
+    // }
 
     if (!empty( $prog_orgs )) {
         $i = 0;
@@ -163,12 +161,12 @@
         ));
     }
 
-    if ( !empty( $experience ) && !in_array( "0", $experience ) ) {
+    if ( !empty( $experience ) && !in_array( "Any", $experience ) ) {
         $i = 0;
         $exp_levels['relation'] = 'OR';
         foreach ( $experience as $exp_level ) {
             $exp_levels[$i] = array(
-                'key' => 'prog_activity_level',
+                'key' => 'prog_experience',
                 'value' => '"' . $exp_level . '"',
                 'compare' => 'LIKE'
             );
@@ -176,7 +174,7 @@
         }
         array_push( $args['meta_query'], $exp_levels );
     }
-
+    
     add_filter( 'posts_orderby', $func = function ( $orderby, $query ) {
         $start_date = date('Ymd');
         global $wpdb;
@@ -188,7 +186,7 @@
         } elseif  ($sr == "date" ) {
             $orderby = 'mt1.meta_value ASC';
         } elseif  ($sr == "price" ) {
-            $orderby = 'CAST(mt4.meta_value AS SIGNED) ASC';
+            $orderby = 'CAST(mt3.meta_value AS SIGNED) ASC';
         } else {
             $orderby = $wpdb->prepare(
                 "
@@ -197,7 +195,7 @@
                     WHEN mt1.meta_value >= %d THEN CONCAT('B', mt1.meta_value)
                     WHEN mt2.meta_value AND mt1.meta_value THEN CONCAT('C', mt1.meta_value)
                     WHEN mt2.meta_value THEN 'D'
-                    ELSE 'E'
+                    ELSE 'Es'
                 END ASC
                 "
                 , $start_date
@@ -207,5 +205,5 @@
     }, 10, 2 );
     $query = new WP_Query( $args );
 
-    remove_filter( 'posts_orderby', $func, 10, 2 );
+    remove_filter( 'posts_orderby', $func, 10, 2 );    
 ?>

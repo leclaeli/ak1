@@ -175,13 +175,13 @@ function add_loginout_link( $items, $args ) {
   		if($students) {
   			foreach($students as $id) {
   				$student_name = get_field('student_name', $id->ID);
-  				$url = home_url('/') .'add-student/?student='. $id->ID;
+  				$url = home_url('/') .'add-student/?st='. $id->ID;
   				if($student_name) {
   					$student_items.='<li><a href="'.$url.'">'.$student_name.'</a></li>';
   				}
   			}
   		}
-        $items = '<li class="asapkids-profile-menu">'. $current_user->user_firstname . ' '. $current_user->user_lastname .'<ul>'. $items . $student_items .'<li><a href="'. wp_logout_url( home_url( '/' ) . 'sign-in') .'">Log Out</a></li></li></ul></ul>';
+        $items = '<li class="asapkids-profile-menu">'. $current_user->user_firstname . ' '. $current_user->user_lastname .'<ul>'. $student_items . $items .'<li><a href="'. wp_logout_url( home_url( '/' ) . 'sign-in') .'">Log Out</a></li></li></ul></ul>';
     }
     return $items;
 }
@@ -193,8 +193,8 @@ function add_loginout_link( $items, $args ) {
 // Allows query vars to be added, removed, or changed prior to executing the query.
 function asapkids_query_vars( $qvars ) {
     $qvars[] = 'ai'; //associated_interests
-    $qvars[] = 'dow';
-    $qvars[] = 'chid'; // student's id
+    $qvars[] = 'dow'; // dows of the week
+    $qvars[] = 'st'; // student's id
     $qvars[] = 'age'; // min age
     $qvars[] = 'maa'; // max age
     $qvars[] = 'sd'; // start end
@@ -637,12 +637,23 @@ function asapkids_login_member() {
 		// only log the user in if there are no errors
 		if(empty($errors)) {
 			
+	        // get student meta data to pass in query
+	        $args = array('post_type' => 'cpt_student', 'post_status' => 'private', 'author' => $user->ID);
+	        $students = get_posts($args);
+	        $st_ids = array();
+	        foreach ( $students as $id ) {
+	            array_push( $st_ids, $id->ID );
+	        }
+	        $st_di = get_field( 'student_distance', $st_ids[0] );
+	        // $st_age = get_field( 'student_age', $st_ids[0] );
+			
 			$creds = array();
 			$creds['user_login'] = $_POST['asapkids_user_login'];
 			$creds['user_password'] = $_POST['asapkids_user_pass'];
 			$user = wp_signon( $creds, false );
  			
-			wp_redirect(home_url()); exit;
+			wp_redirect(home_url() . '/?s&st=' . $st_ids[0] . '&di=' . $st_di . '&age=' . asapkids_get_student_age( $st_ids[0] ) ); // could also redirect to page with links to children
+            exit;
 		}
 	}
 }
@@ -808,3 +819,58 @@ function asapkids_show_error_messages() {
 		echo '</div>';
 	}	
 }
+
+// get students age
+function asapkids_get_student_age( $student_id ) {
+    //if(isset($_GET['st'])) {
+    if ( isset( $student_id ) ) {
+    $birthday = get_field('student_date_of_birth', $student_id );
+    $from = new DateTime($birthday);
+    $to   = new DateTime('today');
+    $age  = $from->diff($to)->y;
+    } else {
+        $age = '';
+    }
+    return $age;
+}
+
+// check for student experience
+function asapkids_check_student_experience( $level ) {
+    if ( get_query_var( 'st' ) ) {
+        $st_exp = get_field( 'student_experience', $_GET['st'] ); // get student experience preferences
+        if ( in_array( $level, $st_exp ) ) echo 'checked';
+    }
+}
+
+
+function asapkids_post_save_acf_form() {
+    global $current_user;
+    get_currentuserinfo();
+    // get student meta data to pass in query
+    $args = array('post_type' => 'cpt_student', 'post_status' => 'private', 'author' => $current_user->ID);
+    $students = get_posts($args);
+    $st_ids = array();
+    foreach ( $students as $id ) {
+        array_push( $st_ids, $id->ID );
+    }
+    $st_di = get_field( 'student_distance', $st_ids[0] );
+    $st_ex = get_field( 'student_experience', $st_ids[0] );
+    $st_da = get_field( 'student_days_desired', $st_ids[0] );
+    $st_in = get_field( 'student_interests', $st_ids[0] );
+    $arr_params = array( 
+        'st' => $st_ids[0],
+        'di' => $st_di,
+        'age' => asapkids_get_student_age( $st_ids[0] ),
+        'ex' => $st_ex,
+        'dow' => $st_da,
+        'ai' => $st_in,
+        's' => get_search_query(),
+    );  
+    
+    if ( !is_admin() ) {
+        wp_redirect( add_query_arg( $arr_params, home_url( '/' ) ) );
+        exit();
+    }
+}
+
+add_action('acf/save_post', 'asapkids_post_save_acf_form', 20);

@@ -13,7 +13,7 @@
 	</div><!-- .container-right -->
 	<footer id="colophon" class="site-footer" role="contentinfo">
 		<div class="site-info">
-			Copyright ASAPK!DS 2015
+			Copyright 2015 ASAPK!DS
 		</div><!-- .site-info -->
 	</footer><!-- #colophon -->
 </div><!-- #page -->

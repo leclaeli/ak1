@@ -37,6 +37,7 @@ function create_my_post_types() {
             'show_ui' => true,
             'label' => 'Organizations',
         	'has_archive' => true,
+        	'rewrite' => array( 'slug' => 'organizations' ),
         )
     );
 
