@@ -491,6 +491,10 @@ textarea {
 /*--------------------------------------------------------------
 # Navigation
 --------------------------------------------------------------*/
+.logged-in .menu {
+	padding-top: 0;
+}
+
 /*--------------------------------------------------------------
 ## Links
 --------------------------------------------------------------*/
@@ -958,6 +962,7 @@ header .search-form .search-field {
 .asapkids-search-info .asapkids-search-info-text { display: inline-block; width: 50%; text-align: left; color: #0441EC; vertical-align: middle; }
 .asapkids-search-info .asapkids-search-info-icons { display: inline-block; width: 49%; text-align: right; vertical-align: middle; }
 .asapkids-search-info .asapkids-search-info-icons li { float: none; display: inline-block; padding-left: 20px; }
+.asapkids-search-info .asapkids-search-info-icons ul { margin: 0; padding: 0; }
 .asapkids-search-info .asapkids-search-info-icons li a { color: #0441EC; text-decoration: none; }
 
 .site-content { background-color: #fff; padding: 0 50px; width: 100%; min-height: 430px; margin: 0; }
@@ -1111,17 +1116,6 @@ header .search-form .search-field {
 
 /* end google map */
 
-/*.chosen-container.chosen-container-single,
-.chosen-container.chosen-container-multi,
-.collapsed select {
-	max-width: 240px;
-}*/
-
-/*#accordion .collapsed {
-	background-color: #f4a05b;
-	padding: 20px;
-}*/
-
 /*
 light orange: #F49F66;
 medium orange: #F57B2F;
@@ -1147,6 +1141,10 @@ darkest orange: #C65923;
 	padding: 0 20px;
 }
 
+.mm-page.mm-slideout {
+	transform: translate3d(80px, 0px, 0px);
+}
+
 .mm-page.mm-slideout,
 .mm-panel.mm-vertical.mm-opened.mm-current {
 	background-color: #F49F66;
@@ -1161,7 +1159,7 @@ darkest orange: #C65923;
 .mm-listview li span img {
    border-radius: 50px;
    width: 50px;
-   margin: -5px 10px -5px -5px;
+   margin: -5px 15px -5px -5px;
    float: left;
 }
 
@@ -1255,8 +1253,8 @@ darkest orange: #C65923;
 	width: 100%;
 }
 
-#page {
-	margin-right: -60px;
+.mm-page #page {
+	margin-right: 0;
 }
 
 /* open close menu */
@@ -1368,22 +1366,6 @@ html.mm-opening #hamburger::after {
     top: 8px;
     height: 5px;
 }
-/*
-.interest-title::before,
-.interest-title::after {
-	background: #000 none repeat scroll 0 0;
-    content: "";
-    display: block;
-    height: 2px;
-    left: 0px;
-    position: absolute;
-    width: 8px;
-    margin-top: 4px;
-}
-
-.interest-title::after {
-	transform: rotate(90deg);
-}*/
 
 @media screen and (min-width: 900px) {
 	.ak-closed-menu	 .mm-slideout {
@@ -1411,7 +1393,7 @@ html.mm-opening #hamburger::after {
 	}
 
 	.ak-opened-menu .mm-slideout {
-		padding-right: 60px;
+		padding-right: 0px;
 	}
 
 }

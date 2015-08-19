@@ -12,23 +12,23 @@ acf_form_head();
 get_header('filter');
 
 
-// get student meta data to pass in query
-$args = array('post_type' => 'cpt_student', 'post_status' => 'private', 'author' => $current_user->ID);
-$students = get_posts($args);
-$st_ids = array();
-foreach ( $students as $id ) {
-    array_push( $st_ids, $id->ID );
-}
-$st_di = get_field( 'student_distance', $st_ids[0] );
 
-$arr_params = array( 
-	'st' => $st_ids[0],
-	'di' => $st_di,
-	'age' => asapkids_get_student_age( $st_ids[0] ),
-	'ex' => '',
-	's' => get_search_query(),
-);	
-echo esc_url( add_query_arg( $arr_params, home_url( '/' ) ) );
+// get student meta data to pass in query
+// $args = array('post_type' => 'cpt_student', 'post_status' => 'private', 'author' => $current_user->ID);
+// $students = get_posts($args);
+// $st_ids = array();
+// foreach ( $students as $id ) {
+//     array_push( $st_ids, $id->ID );
+// }
+// $st_di = get_field( 'student_distance', $st_ids[0] );
+
+// $arr_params = array( 
+// 	'st' => $st_ids[0],
+// 	'di' => $st_di,
+// 	'age' => asapkids_get_student_age( $st_ids[0] ),
+// 	'ex' => '',
+// 	's' => get_search_query(),
+// );	
 					
 
 //default values to create new student custom post type
@@ -63,7 +63,7 @@ $options = array(
 	
 	'post_status' => 'private',
 
-	//'return' => esc_url( add_query_arg( $arr_params, home_url( '/' ) ) ),
+	//'return' => esc_url( home_url( '/add-student/?st=' . $post_id ) ),
 	
 	/* (string) The text displayed on the submit button */
 	'submit_value' => __($verbage, 'acf')	

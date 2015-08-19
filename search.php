@@ -156,6 +156,7 @@ get_header('filter'); ?>
 			<?php } ?>
 		</main><!-- #main -->
 
+	<?php if($query->have_posts()) { ?>
 		<div id="programs-map" class="acf-map box">
 		    <?php
 		    $i = 0;
@@ -176,10 +177,11 @@ get_header('filter'); ?>
 		         }
 		    ?>
 	    </div>	
-		
+	<?php } ?>	
 	</section><!-- #primary -->
 	<div id="content-pane">
 	    <div id="outputDiv"></div>
-	</div>	
+	</div>
+	
 
 <?php get_footer(); ?>

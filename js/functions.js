@@ -370,6 +370,11 @@
     function myLateFunction() {
         var totalResults = $( '.program-list' ).filter(':visible').length;
         $( '.total-results' ).text( totalResults );
+        if ( totalResults == 0 ) {
+            $( "#map-view" ).hide();
+        } else {
+            $( "#map-view" ).show();
+        }
     }
 
     // This example displays an address form, using the autocomplete feature

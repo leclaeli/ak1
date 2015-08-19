@@ -132,10 +132,10 @@ if ( isset( $_GET['st'] ) ) {
 					Experience
 				</span>
 				<ul>
-	                <li><label for="exp1"><input id="exp1" type="checkbox" value="beg" name="ex[]" <?php if ( in_array( "Beginner", $st_ex ) ) echo 'checked'; ?>>Beginner</label></li>
-	                <li><label for="exp2"><input id="exp2" type="checkbox" value="int" name="ex[]" <?php if ( in_array( "Intermediate", $st_ex ) ) echo 'checked'; ?>>Intermediate</label></li>
-	                <li><label for="exp3"><input id="exp3" type="checkbox" value="adv" name="ex[]" <?php if ( in_array( "Advanced", $st_ex ) ) echo 'checked'; ?>>Advanced</label></li>
-	                <li><label for="exp4"><input id="exp4" type="checkbox" value="" name="ex[]" <?php if ( in_array( "Any", $st_ex ) ) echo 'checked'; ?>>Any or Not Applicable</label></li>
+	                <li><label for="exp1"><input id="exp1" type="checkbox" value="Beginner" name="ex[]" <?php if ( in_array( "Beginner", $st_ex ) ) echo 'checked'; ?>>Beginner</label></li>
+	                <li><label for="exp2"><input id="exp2" type="checkbox" value="Intermediate" name="ex[]" <?php if ( in_array( "Intermediate", $st_ex ) ) echo 'checked'; ?>>Intermediate</label></li>
+	                <li><label for="exp3"><input id="exp3" type="checkbox" value="Advanced" name="ex[]" <?php if ( in_array( "Advanced", $st_ex ) ) echo 'checked'; ?>>Advanced</label></li>
+	                <li><label for="exp4"><input id="exp4" type="checkbox" value="Any" name="ex[]" <?php if ( in_array( "Any", $st_ex ) ) echo 'checked'; ?>>Any or Not Applicable</label></li>
 	            </ul>
 			</li>
 	
