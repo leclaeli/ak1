@@ -9,27 +9,7 @@
 
 acf_form_head();
 
-get_header('filter');
-
-
-
-// get student meta data to pass in query
-// $args = array('post_type' => 'cpt_student', 'post_status' => 'private', 'author' => $current_user->ID);
-// $students = get_posts($args);
-// $st_ids = array();
-// foreach ( $students as $id ) {
-//     array_push( $st_ids, $id->ID );
-// }
-// $st_di = get_field( 'student_distance', $st_ids[0] );
-
-// $arr_params = array( 
-// 	'st' => $st_ids[0],
-// 	'di' => $st_di,
-// 	'age' => asapkids_get_student_age( $st_ids[0] ),
-// 	'ex' => '',
-// 	's' => get_search_query(),
-// );	
-					
+get_header();
 
 //default values to create new student custom post type
 $post_id = 'new';
@@ -63,7 +43,7 @@ $options = array(
 	
 	'post_status' => 'private',
 
-	//'return' => esc_url( home_url( '/add-student/?st=' . $post_id ) ),
+	// 'return' => '%post_url%',
 	
 	/* (string) The text displayed on the submit button */
 	'submit_value' => __($verbage, 'acf')	
@@ -71,7 +51,7 @@ $options = array(
 
 	<div id="primary" class="content-area">
 		<main id="main" class="site-main" role="main">
-
+			<div class="back-to-results"><a href="#">Back to results</a></div>
 			<?php while ( have_posts() ) : the_post(); ?>
 				<article id="post-<?php the_ID(); ?>" <?php post_class(); ?>>
 					<header class="entry-header">

@@ -10,6 +10,7 @@
     $experience = get_query_var( 'ex' ); // experience/activity level
     $distance = ( get_query_var( 'di', 9999999 ) != 0 ? get_query_var( 'di' ) : 9999999 ); // distance
     $sr = get_query_var( 'sr' ); // sort results
+
     switch ($sr) {
         case "title_za" :
             $order = 'DESC';
@@ -45,6 +46,7 @@
         'posts_per_page' => -1,
         'post_type' => 'cpt_program',
         'paged' => $paged,
+        //'post__not_in' => $expired_posts,
         's' => $s,
         'meta_query' => array(
             'featured' => array(
@@ -124,21 +126,21 @@
         array_push( $args['meta_query'], $days );
     }
 
-    // if (!empty( $experience )) {
-    //     $i = 0;
-    //     $levels['relation'] = 'OR';
-    //     foreach ( $experience as $level ) {
-    //         $levels[$i] = array(
-    //             'key' => 'prog_experience',
-    //             'value' => '"' . $level . '"',
-    //             'compare' => 'LIKE'
-    //         );
-    //         $i++;
-    //     }
-    //     array_push( $args['meta_query'], $levels );
-    // }
+    /*if (!empty( $activity_level )) {
+        $i = 0;
+        $levels['relation'] = 'OR';
+        foreach ( $activity_level as $level ) {
+            $levels[$i] = array(
+                'key' => 'prog_activity_level',
+                'value' => '"' . $level . '"',
+                'compare' => 'LIKE'
+            );
+            $i++;
+        }
+        array_push( $args['meta_query'], $levels );
+    }*/
 
-    if (!empty( $prog_orgs )) {
+    /*if (!empty( $prog_orgs )) {
         $i = 0;
         $orgs['relation'] = 'OR';
         foreach ( $prog_orgs as $org ) {
@@ -150,7 +152,7 @@
             $i++;
         }
         array_push( $args['meta_query'], $orgs );
-    }
+    }*/
 
     if (!empty( $price )) {
         array_push($args['meta_query'], array (
@@ -166,7 +168,7 @@
         $exp_levels['relation'] = 'OR';
         foreach ( $experience as $exp_level ) {
             $exp_levels[$i] = array(
-                'key' => 'prog_experience',
+                'key' => 'prog_activity_level',
                 'value' => '"' . $exp_level . '"',
                 'compare' => 'LIKE'
             );
@@ -204,6 +206,6 @@
         return $orderby;
     }, 10, 2 );
     $query = new WP_Query( $args );
-
-    remove_filter( 'posts_orderby', $func, 10, 2 );    
+    
+    remove_filter( 'posts_orderby', $func, 10, 2 ); 	       
 ?>

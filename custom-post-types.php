@@ -17,8 +17,8 @@ function create_my_post_types() {
         'add_new'            => _x( 'Add New Student', 'student', 'asapkids' ),
         'add_new_item'       => __( 'Add New Student', 'asapkids' ),
         'new_item'           => __( 'New Student', 'asapkids' ),
-        'edit_item'          => __( 'Edit tudent', 'asapkids' ),
-        'view_item'          => __( 'View student', 'asapkids' ),
+        'edit_item'          => __( 'Edit Student', 'asapkids' ),
+        'view_item'          => __( 'View Student', 'asapkids' ),
         'all_items'          => __( 'All Students', 'asapkids' ),
         'search_items'       => __( 'Search Students', 'asapkids' ),
         'parent_item_colon'  => __( 'Parent Students:', 'asapkids' ),
@@ -45,7 +45,7 @@ function create_my_post_types() {
         'add_new'            => _x( 'Add New Interest', 'Interest', 'asapkids' ),
         'add_new_item'       => __( 'Add New Interest', 'asapkids' ),
         'new_item'           => __( 'New Interest', 'asapkids' ),
-        'edit_item'          => __( 'Edit tudent', 'asapkids' ),
+        'edit_item'          => __( 'Edit Interest', 'asapkids' ),
         'view_item'          => __( 'View Interest', 'asapkids' ),
         'all_items'          => __( 'All Interests', 'asapkids' ),
         'search_items'       => __( 'Search Interests', 'asapkids' ),
@@ -66,6 +66,22 @@ function create_my_post_types() {
         )
     );
 
+    $cpt_organization_labels = array(
+        'name'               => _x( 'Organizations', 'post type general name', 'asapkids' ),
+        'singular_name'      => _x( 'Organization', 'post type singular name', 'asapkids' ),
+        'menu_name'          => _x( 'Organizations', 'admin menu', 'asapkids' ),
+        'name_admin_bar'     => _x( 'Organization', 'add new on admin bar', 'asapkids' ),
+        'add_new'            => _x( 'Add New Organization', 'Organization', 'asapkids' ),
+        'add_new_item'       => __( 'Add New Organization', 'asapkids' ),
+        'new_item'           => __( 'New Organization', 'asapkids' ),
+        'edit_item'          => __( 'Edit Organization', 'asapkids' ),
+        'view_item'          => __( 'View Organization', 'asapkids' ),
+        'all_items'          => __( 'All Organizations', 'asapkids' ),
+        'search_items'       => __( 'Search Organizations', 'asapkids' ),
+        'parent_item_colon'  => __( 'Parent Organizations:', 'asapkids' ),
+        'not_found'          => __( 'No Organizations found.', 'asapkids' ),
+        'not_found_in_trash' => __( 'No Organizations found in Trash.', 'asapkids' )
+    );
     register_post_type(
         'cpt_organization',
         array(
@@ -73,12 +89,28 @@ function create_my_post_types() {
             'show_ui' => true,
             'menu_icon' => 'dashicons-networking',
             'menu_position' => 5,
-            'label' => 'Organizations',
+            'labels' => $cpt_organization_labels,
         	'has_archive' => true,
         	'rewrite' => array( 'slug' => 'organizations' ),
         )
     );
 
+    $cpt_programs_labels = array(
+        'name'               => _x( 'Programs', 'post type general name', 'asapkids' ),
+        'singular_name'      => _x( 'Program', 'post type singular name', 'asapkids' ),
+        'menu_name'          => _x( 'Programs', 'admin menu', 'asapkids' ),
+        'name_admin_bar'     => _x( 'Program', 'add new on admin bar', 'asapkids' ),
+        'add_new'            => _x( 'Add New Program', 'Program', 'asapkids' ),
+        'add_new_item'       => __( 'Add New Program', 'asapkids' ),
+        'new_item'           => __( 'New Program', 'asapkids' ),
+        'edit_item'          => __( 'Edit Program', 'asapkids' ),
+        'view_item'          => __( 'View Program', 'asapkids' ),
+        'all_items'          => __( 'All Programs', 'asapkids' ),
+        'search_items'       => __( 'Search Programs', 'asapkids' ),
+        'parent_item_colon'  => __( 'Parent Programs:', 'asapkids' ),
+        'not_found'          => __( 'No Programs found.', 'asapkids' ),
+        'not_found_in_trash' => __( 'No Programs found in Trash.', 'asapkids' )
+    );
     register_post_type(
         'cpt_program',
         array(
@@ -86,7 +118,8 @@ function create_my_post_types() {
             'show_ui' => true,
             'menu_icon' => 'dashicons-art',
             'menu_position' => 6,
-            'label' => 'Programs',
+            'labels' => $cpt_programs_labels,
+            'rewrite' => array( 'slug' => 'programs' ),
             'supports' => array('thumbnail', 'title', 'editor'),
         )
     );

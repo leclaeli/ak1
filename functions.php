@@ -163,7 +163,7 @@ function my_wp_nav_menu_args( $args ) {
 add_filter( 'wp_nav_menu_args', 'my_wp_nav_menu_args' );
 
 // Attaching custom menu options to logged in user's menu
-add_filter( 'wp_nav_menu_items', 'add_loginout_link', 10, 2 );
+/*add_filter( 'wp_nav_menu_items', 'add_loginout_link', 10, 2 );
 function add_loginout_link( $items, $args ) {
     if (is_user_logged_in() && $args->theme_location == 'primary') {
     	global $current_user;
@@ -175,13 +175,25 @@ function add_loginout_link( $items, $args ) {
   		if($students) {
   			foreach($students as $id) {
   				$student_name = get_field('student_name', $id->ID);
-  				$url = home_url('/') .'add-student/?st='. $id->ID;
+  				$url = home_url('/') .'add-student/?student='. $id->ID;
   				if($student_name) {
   					$student_items.='<li><a href="'.$url.'">'.$student_name.'</a></li>';
   				}
   			}
   		}
         $items = '<li class="asapkids-profile-menu">'. $current_user->user_firstname . ' '. $current_user->user_lastname .'<ul>'. $student_items . $items .'<li><a href="'. wp_logout_url( home_url( '/' ) . 'sign-in') .'">Log Out</a></li></li></ul></ul>';
+    }
+    return $items;
+}*/
+
+// Attaching custom menu options to logged in user's menu
+add_filter( 'wp_nav_menu_items', 'add_loginout_link', 10, 2 );
+function add_loginout_link( $items, $args ) {
+    if (is_user_logged_in() && $args->theme_location == 'primary') {
+    	global $current_user;
+  		get_currentuserinfo();
+  		
+        $items = '<li class="asapkids-profile-menu">'. $current_user->user_firstname . ' '. $current_user->user_lastname .'<ul>'. $items .'<li><a href="'. wp_logout_url( home_url( '/' ) . 'sign-in') .'">Log Out</a></li></li></ul></ul>';
     }
     return $items;
 }
@@ -226,23 +238,22 @@ class Location {
             $this->my_location = "";
             
         }
-        $this->location_title = get_the_title();
-        $this->location_post_id = get_the_id();
-        array_push($location_titles, $this->location_title);
-        array_push($location_post_ids, $this->location_post_id);
     }
+}
+
+function get_user_address() {
+    //if(is_search() && is_user_logged_in()) {
+    if(is_user_logged_in()) {
+        $current_user = wp_get_current_user();
+        $user_address = get_user_meta($current_user->ID, 'address', true).', '.get_user_meta($current_user->ID, 'city', true).', '.get_user_meta($current_user->ID, 'state', true).' '.get_user_meta($current_user->ID, 'zip', true);
+    } else {
+        $user_address = 'Milwaukee, WI';
+    }
+    return $user_address;
 }
 
 // Enqueue Scripts
 function asapkids_scripts() {
-	
-	//if(is_search() && is_user_logged_in()) {
-	if(is_user_logged_in()) {
- 		$current_user = wp_get_current_user();
- 		$user_address = get_user_meta($current_user->ID, 'address', true).', '.get_user_meta($current_user->ID, 'city', true).', '.get_user_meta($current_user->ID, 'state', true).' '.get_user_meta($current_user->ID, 'zip', true);
- 	} else {
- 		$user_address = 'Milwaukee, WI';
- 	}
  	
 	wp_enqueue_script( 'asapkids-skip-link-focus-fix', get_template_directory_uri() . '/js/skip-link-focus-fix.js', array(), '20130115', true );
     wp_enqueue_script('google-maps-api', 'https://maps.googleapis.com/maps/api/js?v=3.exp&signed_in=true&libraries=places', array(), false, true);    
@@ -253,12 +264,17 @@ function asapkids_scripts() {
     wp_localize_script( 'asapkids-jquery-functions', 'ak_localize', array(
         'ajax_url' => admin_url( 'admin-ajax.php' ),
         'distance' => ( get_query_var( 'di', 9999999 ) != 0 ? get_query_var( 'di' ) : 9999999 ), // distance
-        'user_address' => get_query_var( 'addy' ),
+        'user_address' => get_user_address(),
+        'student_id' => get_query_var( 'st' ), //EL added 8/21
     ) );
     
     //if(is_search()) {
-    	wp_localize_script('asapkids-jquery-functions', 'get_user_location', array('address' => $user_address));
+    	//wp_localize_script('asapkids-jquery-functions', 'get_user_location', array('address' => $user_address));
     //}
+    
+    //RDK TESTING FILTERING RESULTS
+    wp_localize_script( 'asapkids-jquery-functions', 'filter_options', array('ajax_url' => admin_url( 'admin-ajax.php' ),) );
+    
     //mmenu
    wp_enqueue_script('mmenu', get_stylesheet_directory_uri() . '/mmenu/jquery.mmenu.min.all.js', array( 'jquery'), false, true);
    wp_enqueue_style( 'asapkids-style', get_stylesheet_uri() );
@@ -268,6 +284,189 @@ function asapkids_scripts() {
    
 }
 add_action('wp_enqueue_scripts', 'asapkids_scripts');
+
+//RDK Testing AJAX Results
+add_action("wp_ajax_filter_results", "filter_results");
+add_action("wp_ajax_nopriv_filter_results", "filter_results");
+function filter_results() {
+    
+    
+    $s = $_POST['s'];
+
+    if ( isset( $_POST['st'] ) && $_POST['st'] != "" ) {
+        $st = $_POST['st'];
+        $st_name = get_field( 'student_name', $st );
+        $distance = get_field( 'student_distance', $st);
+        $experience = get_field( 'student_experience', $st );
+        $interests = get_field( 'student_interests', $st );
+        $daysofweek = get_field( 'student_days_desired', $st );
+        $age = asapkids_get_student_age( $st );
+        $address = get_user_address();
+        // $price = $_POST['pr'];
+    } else {
+        $st_name = "Custom Search";
+        $st = "";
+        $distance = ( $_POST['di'] != 0 ? $_POST['di'] : 9999999 );
+        $experience = ( !empty($_POST['ex']) ? $_POST['ex'] : array() );
+        $interests = ( !empty($_POST['ai']) ? $_POST['ai'] : array() );
+        $daysofweek = ( !empty($_POST['dow']) ? $_POST['dow'] : array() );
+        $start_date = $_POST['sd'];
+        $age  = $_POST['age'];
+        $address= $_POST['addy'];
+        $price = $_POST['pr'];
+    }
+	
+    $paged = (get_query_var('paged')) ? get_query_var('paged') : 1;
+    $args = array(
+        'posts_per_page' => -1,
+        'post_type' => 'cpt_program',
+        'paged' => $paged,
+        //'post__not_in' => $expired_posts,
+        's' => $s,
+        'meta_query' => array(
+            'featured' => array(
+                'key' => 'prog_featured', // {$wpdb->postmeta}
+            ),
+            'start_date' => array(
+                'key' => 'prog_date_start',
+            ),
+            'ongoing' => array(
+                'key' => 'prog_ongoing',
+            ),
+            array(
+                'relation' => 'OR',
+                array (
+                    'key' => 'prog_date_start',
+                    'value' => date('Ymd'),
+                    'compare' => '>=',
+                ),
+                array (
+                    'key' => 'prog_date_expires',
+                    'value' => date('Ymd'),
+                    'compare' => '>=',
+                ),                
+                array (
+                    'key' => 'prog_ongoing',
+                    'value' => true,
+                    'compare' => '=',
+                ),
+            ),
+        ),
+    );
+
+    if (!empty( $age )) {
+        array_push($args['meta_query'],  array (
+                'key' => 'prog_age_min',
+                'value' => $age,
+                'compare' => '<=',
+                'type' => 'NUMERIC'
+            ),
+            array (
+                'key' => 'prog_age_max',
+                'value' => $age,
+                'compare' => '>=',
+                'type' => 'NUMERIC'
+            ));
+    }
+
+    if (!empty( $interests )) {
+        $i = 0;
+        $ints['relation'] = 'OR';
+        foreach ($interests as $interest) {
+            $ints[$i] = array(
+                'key' => 'associated_interests',
+                'value' => '"' . $interest . '"',
+                'compare' => 'LIKE'
+            );
+            $i++;
+        }
+        array_push( $args['meta_query'], $ints);
+    }
+
+    if (!empty( $daysofweek )) {
+        $i = 0;
+        $days['relation'] = 'OR';
+        foreach ( $daysofweek as $day ) {
+            $days[$i] = array(
+                'key' => 'prog_days_offered',
+                'value' => '"' . $day . '"',
+                'compare' => 'LIKE'
+            );
+            $i++;
+        }
+        array_push( $args['meta_query'], $days );
+    }
+
+    /*if (!empty( $prog_orgs )) {
+        $i = 0;
+        $orgs['relation'] = 'OR';
+        foreach ( $prog_orgs as $org ) {
+            $orgs[$i] = array(
+                'key' => 'prog_organization',
+                'value' => '"' . $org . '"',
+                'compare' => 'LIKE'
+            );
+            $i++;
+        }
+        array_push( $args['meta_query'], $orgs );
+    }*/
+
+    if (!empty( $price )) {
+        array_push($args['meta_query'], array (
+            'key' => 'prog_cost',
+            'value' => $price,
+            'compare' => '<=',
+            'type' => 'NUMERIC'
+        ));
+    }
+
+    if ( !empty( $experience ) && !in_array( "Any", $experience ) ) {
+        $i = 0;
+        $exp_levels['relation'] = 'OR';
+        foreach ( $experience as $exp_level ) {
+            $exp_levels[$i] = array(
+                'key' => 'prog_activity_level',
+                'value' => '"' . $exp_level . '"',
+                'compare' => 'LIKE'
+            );
+            $i++;
+        }
+        array_push( $args['meta_query'], $exp_levels );
+    }
+    
+    add_filter( 'posts_orderby', $func = function ( $orderby, $query ) {
+        $start_date = date('Ymd');
+        global $wpdb;
+        $orderby = $wpdb->prepare(
+            "
+            CASE
+                WHEN {$wpdb->postmeta}.meta_value THEN CONCAT('A', mt1.meta_value)
+                WHEN mt1.meta_value >= %d THEN CONCAT('B', mt1.meta_value)
+                WHEN mt2.meta_value AND mt1.meta_value THEN CONCAT('C', mt1.meta_value)
+                WHEN mt2.meta_value THEN 'D'
+                ELSE 'Es'
+            END ASC
+            "
+            , $start_date
+        );
+        return $orderby;
+    }, 10, 2 );
+    $query = new WP_Query( $args );	
+    //include( 'inc/ajaxed-header.php' );
+	include( 'inc/search-results.php' );
+    $filter_array = array(
+        'name' => $st_name,
+        'st' => $st,
+        'age' => $age,
+        'di' => $distance,
+        'ex' => $experience,
+        'dow' => $daysofweek,
+        'ai' => $interests,
+        'addy' => $address,
+    );
+    echo '<div id="json_data">' . json_encode($filter_array) . '</div';
+    die();
+}
 
 //get search to filter out non-programs posts and pages
 /*function mySearchFilter($query) {
@@ -300,9 +499,11 @@ function asapkids_login_form() {
  
 	if(!is_user_logged_in()) {
 		$output = asapkids_login_form_fields();
-	}
-	
+	} else {
+        $output = '<a href="' . home_url( "/manage-students" ) . '">Manage Students</a>';
+    }
 	return $output;
+
 }
 add_shortcode('login_form', 'asapkids_login_form');
 
@@ -636,20 +837,20 @@ function asapkids_login_member() {
  
 		// only log the user in if there are no errors
 		if(empty($errors)) {
-			
+
 			$creds = array();
 			$creds['user_login'] = $_POST['asapkids_user_login'];
 			$creds['user_password'] = $_POST['asapkids_user_pass'];
 			$user = wp_signon( $creds, false );
-
-            // get student meta data to pass in query - might want to redirect to pick a students page
-            $args = array('post_type' => 'cpt_student', 'post_status' => 'private', 'author' => $user->ID);
-            $students = get_posts($args);
-            $st_ids = array();
-            foreach ( $students as $id ) {
-                array_push( $st_ids, $id->ID );
-            }
-            $st_di = get_field( 'student_distance', $st_ids[0] );
+			
+	        // get student meta data to pass in query
+	        $args = array('post_type' => 'cpt_student', 'post_status' => 'private', 'author' => $user->ID);
+	        $students = get_posts($args);
+	        $st_ids = array();
+	        foreach ( $students as $id ) {
+	            array_push( $st_ids, $id->ID );
+	        }
+			$st_di = get_field( 'student_distance', $st_ids[0] );
             $st_ex = get_field( 'student_experience', $st_ids[0] );
             $st_da = get_field( 'student_days_desired', $st_ids[0] );
             $st_in = get_field( 'student_interests', $st_ids[0] );
@@ -662,11 +863,12 @@ function asapkids_login_member() {
                 'dow' => $st_da,
                 'ai' => $st_in,
                 's' => get_search_query(),
-            );  
+            );
  			
 			if ( !is_admin() ) {
-                wp_redirect( add_query_arg( $arr_params, home_url( '/' ) ) );
-                exit();
+                //wp_redirect( add_query_arg( $arr_params, home_url( '/' ) ) );
+                wp_redirect( home_url( '/manage-students' ) );
+                exit;
             }
 		}
 	}
@@ -836,17 +1038,21 @@ function asapkids_show_error_messages() {
 
 // get students age
 function asapkids_get_student_age( $student_id ) {
-    if ( isset( $student_id ) ) {
+    //if(isset($_GET['st'])) {
+    if ( $student_id !== "" ) {
         $birthday = get_field('student_date_of_birth', $student_id );
         $from = new DateTime($birthday);
         $to   = new DateTime('today');
         $age  = $from->diff($to)->y;
+    } elseif ( isset( $_GET['age'] ) ) {
+        $age = get_query_var( 'age' );
     } else {
         $age = '';
     }
     return $age;
 }
 
+// Redirect and load in student data - //EL added 8/21
 function asapkids_post_save_acf_form() {
     global $current_user;
     get_currentuserinfo();
@@ -863,7 +1069,6 @@ function asapkids_post_save_acf_form() {
         $st_id = $st_ids[0];
     }
     
-    var_dump($st_ids);
     $st_di = get_field( 'student_distance', $st_id );
     $st_ex = get_field( 'student_experience', $st_id );
     $st_da = get_field( 'student_days_desired', $st_id );
@@ -876,10 +1081,13 @@ function asapkids_post_save_acf_form() {
         'dow' => $st_da,
         'ai' => $st_in,
         's' => get_search_query(),
-    );  
+    );
     
-    if ( !is_admin() ) {
+    if ( !is_admin() && !is_page( 232 ) ) {
         wp_redirect( add_query_arg( $arr_params, home_url( '/' ) ) );
+        exit;
+    } elseif ( is_page( 232 ) ) {
+        wp_redirect( home_url( '/add-student/?updated=true&st=' . $st_id ) );
         exit;
     }
 }
