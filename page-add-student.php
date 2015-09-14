@@ -42,8 +42,8 @@ $options = array(
 	'form_attributes' => array('class' => 'asapkids_form '),
 	
 	'post_status' => 'private',
-
-	// 'return' => '%post_url%',
+	
+	'return' => home_url('manage-students/?updated=true'),
 	
 	/* (string) The text displayed on the submit button */
 	'submit_value' => __($verbage, 'acf')	
@@ -52,23 +52,24 @@ $options = array(
 	<div id="primary" class="content-area">
 		<main id="main" class="site-main" role="main">
 			<div class="back-to-results"><a href="#">Back to results</a></div>
-			<?php while ( have_posts() ) : the_post(); ?>
-				<article id="post-<?php the_ID(); ?>" <?php post_class(); ?>>
-					<header class="entry-header">
-						<h1 class="entry-title"><?php echo $verbage; ?></h1>
-					</header><!-- .entry-header -->
-					
-					<?php if( isset($_GET['updated']) ) { ?>
-						<div class="asapkids-student-update">
-							Your student has been updated.
-						</div>
-					<?php } ?>
-					
-					<div class="entry-content">
-						<?php acf_form($options); ?>
-					</div><!-- .entry-content -->
-				</article>
-			<?php endwhile; // End of the loop. ?>
+				<?php while ( have_posts() ) : the_post(); ?>
+					<article id="post-<?php the_ID(); ?>" <?php post_class(); ?>>
+						<header class="entry-header">
+							<h1 class="entry-title"><?php echo $verbage; ?></h1>
+						</header><!-- .entry-header -->
+						
+						<?php if( isset($_GET['updated']) ) { 
+							$st_id = $_GET['st']; ?>
+							<div class="asapkids-student-update">
+								Your student has been updated. <a href="<?php echo home_url( '?s=&st=' . $st_id ); ?>">View results</a>
+							</div>
+						<?php } ?>						
+						
+						<div class="entry-content">
+							<?php acf_form($options); ?>
+						</div><!-- .entry-content -->
+					</article>
+				<?php endwhile; // End of the loop. ?>
 
 		</main><!-- #main -->
 	</div><!-- #primary -->

@@ -49,27 +49,4 @@ if(is_user_logged_in()) {
 			</nav><!-- #site-navigation -->
 		</header><!-- #masthead -->
 		
-		<?php if ( is_search() ) { ?>
-			<div class="asapkids-search-info">
-				<div class="asapkids-search-info-text">
-					<?php printf( esc_html__( 'Showing %s Results for "%s"', 'asapkids' ), '<span class="total-results"></span>', '<span>' . get_search_query() . '</span>' ); ?>
-
-				</div>
-				<div class="asapkids-search-info-icons">
-					<ul>
-						<!--<li><a class="fa fa-th-large" href="#"></a></li>-->
-						<li><a id="list-view" class="clicked" href="#"><img src="<?php echo get_template_directory_uri().'/images/list-view.png'; ?>" width="40" height="40" title="List View" alt="List View"></a></li>
-						<li><a id="map-view" href="#"><img src="<?php echo get_template_directory_uri().'/images/map-view.png'; ?>" width="40" height="40" title="Map View" alt="Map View"></a></li>
-					</ul>
-				</div>
-				<!--<div class="asapkids-search-info-select">
-					<select name="asapkids-sort">
-						<option value="location">Location</option>
-						<option value="date">Date</option>
-						<option value="price">Price</option>
-					</select>
-				</div>-->
-			</div>
-		<?php } ?>
-		
 		<div id="content" class="site-content">

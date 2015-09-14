@@ -971,6 +971,12 @@ header .search-form .search-field {
 .asapkids-search-info .asapkids-search-info-icons li a { color: #0441EC; text-decoration: none; }
 
 .site-content { background-color: #fff; padding: 20px 50px 50px; width: 100%; min-height: 430px; margin: 0; }
+.site-content-search { background-color: #fff; padding: 0 0 50px 0; width: 100%; min-height: 430px; margin: 0; }
+.site-content-search article { margin: 0; }
+.asapkids-result { padding: 30px 50px 0 50px; }
+.asapkids-odd { background-color: #fff; }
+.asapkids-even { background-color: #ebebeb; }
+.asapkids-add-padding { padding: 50px; }
 
 .site-footer { background-color: #f1f1f1; text-align: center; height: 100%; margin: 0; }
 .site-footer .site-info { height: 100%; margin: 0; padding: 20px; }
@@ -997,7 +1003,7 @@ header .search-form .search-field {
 .asapkids-search-result-container .asapkids-search-content-left span.featured-title { background: url('images/trophy-black.png') no-repeat left bottom; background-size: 100%; width: 16px; height: 16px; display: inline-block; margin-left: 5%; }
 .asapkids-search-result-container .asapkids-search-content-left span.featured-text { display: inline-block; text-transform: uppercase; font-weight: bold; font-size: .75rem; margin-left: 1%; }
 .asapkids-search-result-container .asapkids-search-content-right { float: right; width: 25%; text-align: right; }
-.asapkids-search-result-container .asapkids-search-content-right img { max-width: 300px; }
+/*.asapkids-search-result-container .asapkids-search-content-right img { max-width: 300px; }*/
 .asapkids-search-result-container .asapkids-clear { clear: both; }
 .asapkids-search-content-left .entry-summary { margin-top: 0; }
 .asapkids-search-content-left .entry-summary p { margin: 5px 0 10px 0; }
@@ -1369,6 +1375,22 @@ html.mm-opening #hamburger::after {
     left: 0px;
     top: 8px;
     height: 5px;
+}
+
+.clear-search {
+	display: none;
+	padding: 4px 8px;
+	margin-left: 10px;
+	font-size: 12px;
+	color: #7e8285;
+	background: #ccc;
+	border-radius: 4px;
+}
+
+.clear-search:hover {
+	color: #000;
+	background: #bbb;
+	cursor: pointer;
 }
 
 /*OVERRIDE DEFAULT STYLES */

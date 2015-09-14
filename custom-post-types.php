@@ -90,8 +90,8 @@ function create_my_post_types() {
             'menu_icon' => 'dashicons-networking',
             'menu_position' => 5,
             'labels' => $cpt_organization_labels,
-        	'has_archive' => true,
-        	'rewrite' => array( 'slug' => 'organizations' ),
+            'has_archive' => true,
+            'rewrite' => array( 'slug' => 'organizations' ),
         )
     );
 

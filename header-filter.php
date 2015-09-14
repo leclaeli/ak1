@@ -21,12 +21,10 @@
 <body <?php body_class(); ?>>
 
 <?php 
-/*** RDK 2015072901: testing code to load student profiles as default filters ***/
-
 if(is_user_logged_in()) {
 	$user = wp_get_current_user();
 	
-	$args = array('post_type' => 'cpt_student', 'post_status' => 'private', 'author' => $user->ID, 'posts_per_page' => -1, 'orderby' => 'title', 'order' => 'ASC');
+	$args = array('post_type' => 'cpt_student', 'post_status' => 'private', 'author' => $user->ID, 'orderby' => 'title', 'order' => 'ASC', 'posts_per_page' => -1 );
 	$students = get_posts($args);
 }
 
@@ -35,7 +33,6 @@ if ( isset( $_GET['st'] ) && $_GET['st'] != "" ) {
     $st_di = get_field( 'student_distance', $st_id);
     $st_ex = get_field( 'student_experience', $st_id );
     $st_ins = get_field( 'student_interests', $st_id );
-    //$st_in = ( get_field( 'student_interests', $st_id ) ? get_field( 'student_interests', $st_id ) : array() );
     $st_in = ( $st_ins ) ? $st_ins : array();
     $st_da = get_field( 'student_days_desired', $st_id );
     $st_name = get_field( 'student_name', $st_id );
@@ -48,8 +45,6 @@ if ( isset( $_GET['st'] ) && $_GET['st'] != "" ) {
     $st_da = ( get_query_var( 'dow' ) != "" ? get_query_var( 'dow' ) : array() );
     $st_name = "Student";
 }
-
-
 ?>
 <div id="page" class="hfeed site">
 	<a class="skip-link screen-reader-text" href="#content"><?php esc_html_e( 'Skip to content', 'asapkids' ); ?></a>
@@ -164,16 +159,6 @@ if ( isset( $_GET['st'] ) && $_GET['st'] != "" ) {
                             }
                             foreach ( $categories as $category ) {
 
-                                /*$has_interest_args = array(
-                                    'post_type' = 'cpt_program',
-                                    'meta_query' => array(
-                                        'key' => 'associated_interests',
-                                        'value' => '"' . $category->cat_ID . '"',
-                                        'compare' => 'LIKE'
-                                    )
-                                )
-                                $has_interest = get_posts( $has_interest_args );*/
-
                                 echo '<div class="interest-container"><a class="interest-title">' . $category->name . '</a>';
                                 global $post; 
                                 $interest_args = array( 
@@ -188,13 +173,12 @@ if ( isset( $_GET['st'] ) && $_GET['st'] != "" ) {
                                     'orderby' => 'title',
                                     'order' => 'ASC'
                                 );  
-                                    // 'category' => $category->cat_ID ); 
+
                                 $interests_posts = get_posts($interest_args);
                                 echo '<div class="hide-interests">';
-                                $i = 1;
-                                foreach( $interests_posts as $post ) : setup_postdata($post); ?>
-                                    <div><label for="ai<?php echo _e( $i, 'asapkids' );  ?>"><input id="ai<?php echo _e( $i, 'asapkids' );  ?>" type="checkbox" value="<? echo $post->ID; ?>" name="ai[]"><?php the_title(); ?></label></div>
-                                <?php $i++; ?>
+                                foreach( $interests_posts as $post ) : setup_postdata($post);
+                                    $int_id = strtolower( $category->name . '-' . get_the_title() ); ?> <!-- generate unique id -->
+                                    <div><label for="<?php echo _e( $int_id, 'asapkids' );  ?>"><input id="<?php echo _e( $int_id, 'asapkids' );  ?>" type="checkbox" value="<? echo $post->ID; ?>" name="ai[]"><?php the_title(); ?></label></div>
                                 <?php endforeach;
                                 echo '</div></div>';
                                 wp_reset_postdata();
@@ -203,20 +187,12 @@ if ( isset( $_GET['st'] ) && $_GET['st'] != "" ) {
                     ?>
 	        	</div>
 		    </li>
-
-            <li class="dark-orange"><h4 class="menu-divider">Additional Filters</h4></li>
-
-            <li>
+		    
+			<li>
                 <span>
                     <img src="<?php echo get_template_directory_uri(); ?>/images/date.png" />
-                    Date
+                    Days
                 </span>
-                <ul>
-                    <li>
-                        <span>I'm looking for programs that begin before:</span>
-                        <input name="sd" type="text" id="datepicker" placeholder="Select a date" />
-                    </li>
-                </ul>
                 
                 <?php //update_field( 'field_553fcaeb840ce', array( $dow ), $_GET['st'] ); ?>
 
@@ -238,18 +214,21 @@ if ( isset( $_GET['st'] ) && $_GET['st'] != "" ) {
                 <?php } ?>
                 </ul>
 
+            </li>		    
 
-<!-- 
+            <li class="dark-orange"><h4 class="menu-divider">Additional Filters</h4></li>
+
+            <li>
+                <span>
+                    <img src="<?php echo get_template_directory_uri(); ?>/images/date.png" />
+                    Date
+                </span>
                 <ul>
-                    <li><label for="dow2"><input id="dow2" type="checkbox" value="mon" name="dow[]" <?php if ( in_array( "mon", $st_da ) ) echo 'checked' ?>>Monday</label></li>
-                    <li><label for="dow3"><input id="dow3" type="checkbox" value="tues" name="dow[]" <?php if ( in_array( "tues", $st_da ) ) echo 'checked' ?>>Tuesday</label></li>
-                    <li><label for="dow4"><input id="dow4" type="checkbox" value="wed" name="dow[]" <?php if ( in_array( "wed", $st_da ) ) echo 'checked' ?>>Wednesday</label></li>
-                    <li><label for="dow5"><input id="dow5" type="checkbox" value="thur" name="dow[]" <?php if ( in_array( "thur", $st_da ) ) echo 'checked' ?>>Thursday</label></li>
-                    <li><label for="dow6"><input id="dow6" type="checkbox" value="fri" name="dow[]" <?php if ( in_array( "fri", $st_da ) ) echo 'checked' ?>>Friday</label></li>
-                    <li><label for="dow7"><input id="dow7" type="checkbox" value="sat" name="dow[]" <?php if ( in_array( "sat", $st_da ) ) echo 'checked' ?>>Saturday</label></li>
-                    <li><label for="dow1"><input id="dow1" type="checkbox" value="sun" name="dow[]" <?php if ( in_array( "sun", $st_da ) ) echo 'checked' ?>>Sunday</label></li>
+                    <li>
+                        <span>I'm looking for programs that begin before:</span>
+                        <input name="sd" type="text" id="datepicker" placeholder="Select a date" />
+                    </li>
                 </ul>
-                 -->
             </li>
 
             <li>
@@ -259,7 +238,7 @@ if ( isset( $_GET['st'] ) && $_GET['st'] != "" ) {
                 </span>
                 <ul>
                     <li>
-                        <select name="pr" id="select-price"> <!-- use array and for each to dynamically build this -->
+                        <select name="pr" id="select-price">
                             <option value="">Any Price</option>
                             <option value="25">$25 or Less</option>
                             <option value="50">$50 or Less</option>
@@ -281,33 +260,25 @@ if ( isset( $_GET['st'] ) && $_GET['st'] != "" ) {
 			<div class="site-branding">
 				<h1 class="site-title"><a href="<?php echo esc_url( home_url( '/' ) ); ?>" rel="home"><img src="<?php echo get_template_directory_uri().'/images/asapkids-logo.png'; ?>" title="ASAPK!DS" alt="ASAPK!DS"></a></h1>
 				<h2 class="site-description"><?php bloginfo( 'description' ); ?></h2>
-			</div><!-- .site-branding --><?php get_search_form(); ?><nav id="site-navigation" class="main-navigation" role="navigation">
-				<!--<button class="menu-toggle" aria-controls="primary-menu" aria-expanded="false">--><?php //esc_html_e( 'Primary Menu', 'asapkids' ); ?><!--</button>-->
-				<?php wp_nav_menu( array( 'theme_location' => 'primary', 'menu_id' => 'primary-menu' ) ); ?>
+			</div><!-- .site-branding --><?php get_search_form(); ?>
+            <nav id="site-navigation" class="main-navigation" role="navigation"><?php wp_nav_menu( array( 'theme_location' => 'primary', 'menu_id' => 'primary-menu' ) ); ?>
 			</nav><!-- #site-navigation -->
 		</header><!-- #masthead -->
 		
 		<?php if ( is_search() ) { ?>
 			<div class="asapkids-search-info">
 				<div class="asapkids-search-info-text">
-					<?php printf( esc_html__( 'Showing %s Results for "%s"', 'asapkids' ), '<span class="total-results"></span>', '<span>' . get_search_query() . '</span>' ); ?>
-
+                    <?php $search_query = ( get_search_query() != "" ? 'for "' . get_search_query() . '"' : "" ); ?>
+					<?php printf( esc_html__( '%s %s', 'asapkids' ), '<span class="total-results">Results </span>', '<span class="search-query">' . $search_query . '</span>' ); ?>
+					<span class="clear-search">Clear/Show All</span>
 				</div>
 				<div class="asapkids-search-info-icons">
 					<ul>
-						<!--<li><a class="fa fa-th-large" href="#"></a></li>-->
 						<li><a id="list-view" class="clicked" href="#"><img src="<?php echo get_template_directory_uri().'/images/list-view.png'; ?>" width="40" height="40" title="List View" alt="List View"></a></li>
 						<li><a id="map-view" href="#"><img src="<?php echo get_template_directory_uri().'/images/map-view.png'; ?>" width="40" height="40" title="Map View" alt="Map View"></a></li>
 					</ul>
 				</div>
-				<!--<div class="asapkids-search-info-select">
-					<select name="asapkids-sort">
-						<option value="location">Location</option>
-						<option value="date">Date</option>
-						<option value="price">Price</option>
-					</select>
-				</div>-->
 			</div>
 		<?php } ?>
 		
-		<div id="content" class="site-content">
+		<div id="content" class="site-content-search">

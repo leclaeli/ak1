@@ -3,11 +3,11 @@
 	$(function() {
 		// localStorage.removeItem('ex');
 	
-		if ( $( "#select-student" ).length ) {
-			localStorage.st = $('#select-student').val();
-		} else {
-			localStorage.st = "";
-		}
+		// if ( $( "#select-student" ).length ) {
+		// 	localStorage.st = $('#select-student').val();
+		// } else {
+		// 	localStorage.st = "";
+		// }
 
 		$( '#autocomplete' ).val( ak_localize.user_address );
 
@@ -65,22 +65,9 @@
 			} 
 		}).resize(); // This will simulate a resize to trigger the initial run.
 	
-		//initialize();
-		//calculateDistances();
 		$( 'form.filter-preferences :input:not("#autocomplete")' ).first().trigger('change');
 
 	}); // end $(function() - self calling (on ready)
-
-	function programLocations() {
-		window.progLocation = [];
-		var $markers = $( '#programs-map' ).find( '.marker' );
-		// get the lat and lng to calculate distances with
-		$markers.each(function(index){
-			var onlyLatLng = $( this ).attr('data-lat') + ', ' + $( this    ).attr('data-lng');
-			progLocation[index] = onlyLatLng;
-		});
-	}
-
 
 	/*
 	*  render_map
@@ -119,7 +106,7 @@
 		map.markers = [];
 
 		// add markers
-		window.progLocation = [];
+		//window.progLocation = [];
 		$markers.each(function(index){
 			add_marker( $(this), map, index );
 		});
@@ -128,13 +115,7 @@
 
 		google.maps.event.addListener(map, 'tilesloaded', function(evt) {
 			$('.asapkids-loading').hide();
-			console.log('hide loading');
 		});
-
-		//center labels
-		// $( '#map-view' ).one( "click", function(event) {
-		// 	centerMarkerLabels();
-		// });
 	}
 
 	/*
@@ -239,6 +220,16 @@
 		var origin1 = $( '#autocomplete' ).val();
 		return origin1;
 	}
+	
+	function programLocations() {
+		window.progLocation = [];
+		var $markers = $( '#programs-map' ).find( '.marker' );
+		// get the lat and lng to calculate distances with
+		$markers.each(function(index){
+			var onlyLatLng = $( this ).attr('data-lat') + ', ' + $( this    ).attr('data-lng');
+			progLocation[index] = onlyLatLng;
+		});
+	}	
 
 	function calculateDistances() {
 		programLocations();
@@ -262,7 +253,6 @@
 			if ( $(".program-list.pinned").length ) {
 				var origins = response.originAddresses;
 				var destinations = response.destinationAddresses;
-				console.log(response);
 				for (var i = 0; i < origins.length; i++) {
 					var results = response.rows[i].elements;
 					//addMarker(origins[i], false);
@@ -273,7 +263,7 @@
 				}
 				howFarIsIt();
 			} else {
-				asapkidsRenderMapOnce();
+				//asapkidsRenderMapOnce();
 				myLateFunction();
 			}
 		}
@@ -283,7 +273,7 @@
 	function howFarIsIt() {
 		$( '.program-list.pinned').each(function(index, el) {
 			var howFar = $( el ).attr('data-distance');
-			var progId = $( el ).attr( 'id' );
+			var progId = $( el ).attr( 'data-id' );
 			var maxDistance = $( '#select-distance' ).val();
 			if (howFar > parseInt( maxDistance ) ) {
 
@@ -308,9 +298,29 @@
 		}
 	}
 	 
+	// Count results (needs to run after google maps) - called from howFarIsIt()
+	function myLateFunction() {
+
+		var totalResults = $( '.program-list' ).filter(':visible').length;
+		if ( totalResults !== 1 ) {
+			
+			$( '.total-results' ).text( "Showing " + totalResults + " results" );
+		} else {
+			$( '.total-results' ).text( "Showing " +  totalResults + " result" );
+		}
+		
+		if ( totalResults == 0 || !$( '.program-list.pinned').length ) {
+			$( "#map-view" ).hide();
+		} else {
+			$( "#map-view" ).show();
+		} 
+		// if ( !$( '.program-list.pinned').length ) {
+		// 	$( "#map-view" ).hide();
+		// }       
+	}	 
+	 
 // Programs list and map view slider (should be able to consolidate)
 	$( '.asapkids-search-info' ).on('click', '#map-view:not(.clicked)', function(event) {
-		console.log($.firstTime);
 		event.preventDefault();
 		/* Act on the event */
 		$( this ).addClass('clicked');
@@ -352,7 +362,6 @@
 
 	// submit forms
 	$('.search-field').keyup(function(event) { // main search in header
-		/* Act on the event */
 		var fieldText = $( this ).val();
 		$( '#filter-search' ).val( fieldText ); // hidden field on filter sidebar
 	});
@@ -364,38 +373,44 @@
 		}
 	});
 
-	// Count results (needs to run after google maps) - called from howFarIsIt() in google-maps.js
-	function myLateFunction() {
-		var totalResults = $( '.program-list' ).filter(':visible').length;
-		$( '.total-results' ).text( totalResults );
-		if ( totalResults == 0 ) {
-			$( "#map-view" ).hide();
-		} else {
-			$( "#map-view" ).show();
-		}        
-	}
+	if ( $('.search-field' ).val() !== "" ) {
+		$( '.clear-search' ).show();
+	} else {}
 
-	function initialize() {
+	$( '.clear-search' ).click(function(event) {
+		$('form.filter-preferences :input').each(function(index, el) {
+			$( el ).val( "" );
+		});
+		for (var i = 0; i < localStorage.length; i++){
+			localStorage.setItem(localStorage.key(i), "");
+			lsValue = localStorage.getItem(localStorage.key(i));
+			// console.log(localStorage.key(i) + ':' + lsValue);
+		}
+		$( '.search-field' ).val( "" ).trigger( 'keyup' );
+		$( '.filter-preferences' ).submit();
+	});
+
+	// function initialize() {
 		
-		function isEmpty( el ){
-			return $.trim( el.html() );
-		}
-		// if no user address is given don't calculate the distances
-		if ( isEmpty( $('#autocomplete') ) ) {
-			$('.acf-map').each(function() {
-				render_map( $(this) );
-			});
-			myLateFunction();
-		} else {
-			calculateDistances();
-		}
+	// 	function isEmpty( el ){
+	// 		return $.trim( el.html() );
+	// 	}
+	// 	// if no user address is given don't calculate the distances
+	// 	if ( isEmpty( $('#autocomplete') ) ) {
+	// 		$('.acf-map').each(function() {
+	// 			render_map( $(this) );
+	// 		});
+	// 		myLateFunction();
+	// 	} else {
+	// 		calculateDistances();
+	// 	}
 
-		autocompleteObj();
-	}
+	// 	autocompleteObj();
+	// }
 
 	$('#autocomplete').focus(function(event) {
-		autocompleteObj();
-		geolocate();
+	 	autocompleteObj();
+	 	geolocate();
 	});
 
 	// Create the autocomplete object, restricting the search to geographical location types.
@@ -471,8 +486,12 @@
 		});
 	});
 	
-	//Detect changes made to any of the filter menu fields and post the form to rerun the query
+	$.pageLoad = true; // global
+
+	// Detect changes made to any of the filter menu fields and post the form to rerun the query
+	
 	$('body').on('change', 'form.filter-preferences :input:not("#autocomplete")', function(e) {
+	
 	// $('form.filter-preferences :input').change(function(e){
 		
 		//change the "Student" label to "Custom Search" when any field is changed
@@ -520,6 +539,8 @@
 		
 		//populate non-checkbox inputs
 
+
+
 		$('form.filter-preferences :input').not(':checkbox').each(function(index, element) {
 				
 			if(element.name == 'sd') {
@@ -547,21 +568,45 @@
 				localStorage.s = s;
 			}
 			// if(element.name == 'st') {
-			// 	st = $(element).val();
+			// 	localStorage.st = $(element).val();
 			// }
 		});
 
-		if ( $( "#select-student" ).length ) {
-			stOnChange = $('#select-student').val();
-			if (stOnChange !== localStorage.st) {
-				st = stOnChange;
-				localStorage.st = stOnChange;
-			} else {
+		st = "";
+
+		// On initial page load 'st' equals current value of 'localStorage.st'
+		console.log($.pageLoad);
+		if ( $.pageLoad == true ) {
+			if( localStorage.st == 'undefined') {
 				st = "";
+				localStorage.st = "";
+			} else {
+				st = localStorage.st;
 			}
-		} else {
+			console.log( 'st=' + st + ' | localStorage.st = ' + localStorage.st);
+			$.pageLoad = false;
+		} else { // on subsequent ajax loads 'st' and 'localStorage.st' will only change if the value of "#select-student" has changed. Otherwise changing a value on another field when a student is selected will not change the "#select-student" value to "" ("Custom Search").	
+			stOnChange = $('#select-student').val();
 			st = "";
+			if ( $( "#select-student").length ) {
+				if ( stOnChange !== localStorage.st ) {
+					st = stOnChange;
+					//localStorage.st = stOnChange;
+				}
+			} 	
 		}
+
+		// if ( $( "#select-student" ).length && $.pageLoad == false ) {
+		// 	stOnChange = $('#select-student').val();
+		// 	if (stOnChange !== localStorage.st) {
+		// 		st = stOnChange;
+		// 		localStorage.st = stOnChange;
+		// 	} else {
+		// 		st = "";
+		// 	}
+		// } else {
+		// 	st = "";
+		// }
 
 		data = {
 			action: 'filter_results',
@@ -586,17 +631,16 @@
 			
 			var success_main = $($.parseHTML(response)).filter("#primary");
 			var success_map  = $($.parseHTML(response)).find("#programs-map");
-			// var success_form = $($.parseHTML(response)).filter(".filter-preferences");
-			$('#programs-map').remove();
-			$('#programs-map').html($(success_map).html());
-			$('.asapkids-loading').hide();
-			// $('.filter-preferences').replaceWith( success_form );	
+			//$('#programs-map').remove();
+			//$('.asapkids-loading').hide();	
 			$('#main').remove(); 
 			$('#primary').html($(success_main).html());
+			$('#programs-map').html($(success_map).html());
 			$.firstTime = true;
 			
 			$('.asapkids-student-name').text(myJson[0].name);
 			$('#select-student').val(myJson[0].st);
+			localStorage.st = $('#select-student').val();
 			$('#age').val(myJson[0].age);
 			$('#autocomplete').val(myJson[0].addy);
 			$('#select-distance').val(myJson[0].di);
@@ -609,20 +653,24 @@
 			
 			$( '#map-view' ).removeClass('clicked');
 			if ( $( '.program-list' ).length ) {
-				//akMenu();
-				//initialize();
-				//asapkidsRenderMapOnce();
 				calculateDistances();
-				//centerMarkerLabels();
-			} else {
-				console.log('no results');
-			}
+			} else {;
+				myLateFunction();
+				
+				var result_count = 0;
 
+				$('.asapkids-result').each(function() {
+					result_count = result_count + 1;
+				});
+			}
+			$('.asapkids-loading').hide();
 		});
 	});
-
-
 	
+	$( '.sign-out' ).click(function(event) {
+		localStorage.clear();
+	});
+
 	function locationHref() {
 
 		var localS = ['s','st','sd','age','addy','pr','di','ai','ex','dow'];
@@ -661,5 +709,8 @@
    $( ".back-to-results" ).click(function(event) {
 	   locationHref();
    }); // End EL added...
+   
+   //using jQuery to hide "Apply Filters" button, this way if user has javascript disabled, search filtering still works
+	$('#view-results').hide();
 	
 })(jQuery)

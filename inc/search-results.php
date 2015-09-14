@@ -7,9 +7,9 @@
 
 ?>
 <div class="asapkids-loading"></div>
+
 <section id="primary" class="content-area">
 	<main id="main" class="site-main" role="main">
-		<!-- <div class="asapkids-loading"></div> -->
 		<?php  
 			$locations = array();
 			$location_titles = array();
@@ -18,9 +18,20 @@
 		?>
 
 		<?php /* Start the Loop */ ?>
-		<?php if($query->have_posts()) { ?>
 		
+		<?php 
+			if($query->have_posts()) { 
+				$count = 0;
+		?>
+	
 			<?php while ( $query->have_posts() ) : $query->the_post();
+				$count = $count + 1;
+				if ($count & 1) {
+				    $style = 'asapkids-odd';
+				} else {
+				    $style = 'asapkids-even';
+				}
+				
 				$loc = new Location(); // class in functions.php
                 $prog_id = get_the_id();
                 
@@ -36,9 +47,8 @@
                 	$pinned,
                 );
 			?>			
-			
-				<article id="post-<?php the_ID(); ?>" <?php post_class( $classes ); ?>  class="program-list<?php echo $loc->has_loc; ?>">
-					
+				<div class="asapkids-result<?php echo ' '.$style; ?>">
+				<article id="post-<?php the_ID(); ?>" data-id="<?php the_ID(); ?>" <?php post_class( $classes ); ?>  class="program-list<?php echo $loc->has_loc; ?>">
 					<?php 	
 						$org_id = get_field('prog_organization')[0];
 						$org_name = get_the_title($org_id);		
@@ -59,7 +69,7 @@
 							$featured_title = '</a></h1>';
 						}
 					?>	
-					
+				
 					<div class="asapkids-search-result-container">
 						
 						<?php if ( has_post_thumbnail() ) { $class_name = 'seventy-five-percent'; ?>
@@ -132,9 +142,7 @@
 									
 									<?php if( $level ) : ?>
 										<li><img src="<?php echo get_template_directory_uri().'/images/experience-black.png'; ?>" width="40" height="40"><span><?php echo implode( ', ', $level); ?></span></li>
-									<?php endif; ?>
-									<!--<li>Days:--> <?php //echo implode( ", ", $days_offered ); ?> <!--</li>-->
-																	
+									<?php endif; ?>				
 								</ul>
 								
 								<div class="asapkids-program-details-button"><a href="<?php echo esc_url(get_permalink()); ?>">See Event Details</a></div>
@@ -146,16 +154,15 @@
 						</div>
 						<div class="asapkids-clear"></div>
 					</div>
-					
 				</article><!-- #post-## -->
-	
+				</div>	
 			<?php 
 				endwhile; 
 				/* Restore original Post Data */
 				wp_reset_query();
 			?>		
 		<?php } else { ?>
-			<div class="asapkids-search-result-container">No programs were found based on your search criteria. Try switching your student profile or changing the filter values in the orange search menu to the left.</div>
+			<div class="asapkids-search-result-container"><div class="asapkids-add-padding">No programs were found based on your search criteria. Try switching your student profile or changing the filter values in the orange search menu to the left.</div></div>
 		<?php } ?>
 	</main><!-- #main -->
 	

@@ -35,6 +35,26 @@
             $order_by = 'prog_date_start';
     }
 
+
+    global $wpdb;
+    // If you use a custom search form
+    // $keyword = sanitize_text_field( $_POST['keyword'] );
+    // If you use default WordPress search form
+    $keyword = get_search_query();
+    $keyword = '%' . $wpdb->esc_like( $keyword ) . '%'; // Thanks Manny Fleurmond
+    // Search in all custom fields
+    $post_ids_meta = $wpdb->get_col( $wpdb->prepare( "
+        SELECT DISTINCT post_id FROM {$wpdb->postmeta}
+        WHERE meta_value LIKE '%s'
+    ", $keyword ) );
+    // Search in post_title and post_content
+    $post_ids_post = $wpdb->get_col( $wpdb->prepare( "
+        SELECT DISTINCT ID FROM {$wpdb->posts}
+        WHERE post_title LIKE '%s'
+        OR post_content LIKE '%s'
+    ", $keyword, $keyword ) );
+    $post_ids = array_merge( $post_ids_meta, $post_ids_post );
+
     /**
      * The WordPress Query class.
      * @link http://codex.wordpress.org/Function_Reference/WP_Query
@@ -45,9 +65,10 @@
     $args = array(
         'posts_per_page' => -1,
         'post_type' => 'cpt_program',
+        'post__in' => $post_ids,
         'paged' => $paged,
         //'post__not_in' => $expired_posts,
-        's' => $s,
+        //'s' => $s,
         'meta_query' => array(
             'featured' => array(
                 'key' => 'prog_featured', // {$wpdb->postmeta}
