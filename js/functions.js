@@ -9,6 +9,8 @@
 		// 	localStorage.st = "";
 		// }
 
+
+
 		$( '#autocomplete' ).val( ak_localize.user_address );
 
 		// datepicker
@@ -575,7 +577,6 @@
 		st = "";
 
 		// On initial page load 'st' equals current value of 'localStorage.st'
-		console.log($.pageLoad);
 		if ( $.pageLoad == true ) {
 			if( localStorage.st == 'undefined') {
 				st = "";
@@ -583,7 +584,7 @@
 			} else {
 				st = localStorage.st;
 			}
-			console.log( 'st=' + st + ' | localStorage.st = ' + localStorage.st);
+			// console.log( 'st=' + st + ' | localStorage.st = ' + localStorage.st);
 			$.pageLoad = false;
 		} else { // on subsequent ajax loads 'st' and 'localStorage.st' will only change if the value of "#select-student" has changed. Otherwise changing a value on another field when a student is selected will not change the "#select-student" value to "" ("Custom Search").	
 			stOnChange = $('#select-student').val();
@@ -626,7 +627,7 @@
 		
 		$.post(filter_options.ajax_url, data,
 		function(response){
-			
+			add_query_params_url();
 			var myJson = $($.parseJSON($($.parseHTML(response)).filter("#json_data").text()));
 			
 			var success_main = $($.parseHTML(response)).filter("#primary");
@@ -671,6 +672,15 @@
 		localStorage.clear();
 	});
 
+	function add_query_params_url() {
+		//var myURL = document.location;
+		if (history.pushState) {
+			var newurl = 'http://' + window.location.hostname + '/wordpress/?' + locationHref();
+		    //var newurl = window.location.protocol + "//" + window.location.host + window.location.pathname + locationHref();
+		    window.history.pushState({path:newurl},'',newurl);
+		}
+	}
+
 	function locationHref() {
 
 		var localS = ['s','st','sd','age','addy','pr','di','ai','ex','dow'];
@@ -701,13 +711,16 @@
 			false 
 		);
 
-		var currentUrl = 'http://' + window.location.hostname + '/wordpress/?' + akQueryParams;
+		return akQueryParams;
+	}
 
+	function backToResultsUrl() {
+		var currentUrl = 'http://' + window.location.hostname + '/wordpress/?' + locationHref();
 		location.href = currentUrl;
 	}
 
    $( ".back-to-results" ).click(function(event) {
-	   locationHref();
+   		backToResultsUrl();
    }); // End EL added...
    
    //using jQuery to hide "Apply Filters" button, this way if user has javascript disabled, search filtering still works

@@ -312,7 +312,7 @@ function filter_results() {
     ", $keyword, $keyword ) );
     $post_ids = array_merge( $post_ids_meta, $post_ids_post );
 
-    print_r($post_ids);
+    // print_r($post_ids);
     
     $paged = (get_query_var('paged')) ? get_query_var('paged') : 1;
     $args = array(
@@ -1206,13 +1206,13 @@ function sorting_cpt_student_columns( $columns ) {
 // update_post_meta($postid, "_post_title", $_POST["post_title"]);
 // }
 
-add_action( "save_post", "add_custom_fields_for_search" );
+// add_action( "save_post", "add_custom_fields_for_search" );
 
-function add_custom_fields_for_search( $postid ) {
-    $currentScreen = get_current_screen();
-    if( $currentScreen->post_type === "cpt_program" ) {
-        $org_id = get_field('prog_organization');
-        $org_title = get_the_title($org_id[0]);
-        update_post_meta( $postid, 'organization_name', $org_title );
-    }
-}
+// function add_custom_fields_for_search( $postid ) {
+//     $currentScreen = get_current_screen();
+//     if( $currentScreen->post_type === "cpt_program" ) {
+//         $org_id = get_field('prog_organization');
+//         $org_title = get_the_title($org_id[0]);
+//         update_post_meta( $postid, 'organization_name', $org_title );
+//     }
+// }

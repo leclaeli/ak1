@@ -14,6 +14,11 @@ get_header(); ?>
 
 	<div id="primary" class="content-area">
 		<main id="main" class="site-main" role="main">
+            <?php if (!empty($_SERVER["QUERY_STRING"])) { ?>
+                <div class="back-to-results"><a href="<?php echo esc_url( home_url( '/?s' ) ); ?>">Back to Results</a></div>
+            <?php } else { ?>
+                <div class="back-to-results"><a href="<?php echo esc_url( home_url( '/?s' ) ); ?>">Go to Search</a></div>
+            <?php } ?>
 
 			<?php while ( have_posts() ) : the_post(); ?>
 
