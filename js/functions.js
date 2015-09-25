@@ -228,7 +228,7 @@
 		var $markers = $( '#programs-map' ).find( '.marker' );
 		// get the lat and lng to calculate distances with
 		$markers.each(function(index){
-			var onlyLatLng = $( this ).attr('data-lat') + ', ' + $( this    ).attr('data-lng');
+			var onlyLatLng = $( this ).attr('data-lat') + ', ' + $( this ).attr('data-lng');
 			progLocation[index] = onlyLatLng;
 		});
 	}	
@@ -304,6 +304,7 @@
 	function myLateFunction() {
 
 		var totalResults = $( '.program-list' ).filter(':visible').length;
+
 		if ( totalResults !== 1 ) {
 			
 			$( '.total-results' ).text( "Showing " + totalResults + " results" );
@@ -316,9 +317,10 @@
 		} else {
 			$( "#map-view" ).show();
 		} 
-		// if ( !$( '.program-list.pinned').length ) {
-		// 	$( "#map-view" ).hide();
-		// }       
+		
+		if ( $('.search-field' ).val() !== "" || totalResults < 5 ) {
+			$( '.clear-search' ).show();
+		}  
 	}	 
 	 
 // Programs list and map view slider (should be able to consolidate)
@@ -375,10 +377,6 @@
 		}
 	});
 
-	if ( $('.search-field' ).val() !== "" ) {
-		$( '.clear-search' ).show();
-	} else {}
-
 	$( '.clear-search' ).click(function(event) {
 		$('form.filter-preferences :input').each(function(index, el) {
 			$( el ).val( "" );
@@ -386,7 +384,6 @@
 		for (var i = 0; i < localStorage.length; i++){
 			localStorage.setItem(localStorage.key(i), "");
 			lsValue = localStorage.getItem(localStorage.key(i));
-			// console.log(localStorage.key(i) + ':' + lsValue);
 		}
 		$( '.search-field' ).val( "" ).trigger( 'keyup' );
 		$( '.filter-preferences' ).submit();
@@ -527,7 +524,7 @@
 			if($(element).is(':checked')) {
 				dow.push($(element).val());
 			}
-		});	 
+		});
 		
 		$("input:checkbox[name='ex[]']").each(function(index, element){
 			if($(element).is(':checked')) {
@@ -540,9 +537,6 @@
 		localStorage.ex = JSON.stringify(ex);
 		
 		//populate non-checkbox inputs
-
-
-
 		$('form.filter-preferences :input').not(':checkbox').each(function(index, element) {
 				
 			if(element.name == 'sd') {
@@ -569,22 +563,19 @@
 				s = $(element).val();
 				localStorage.s = s;
 			}
-			// if(element.name == 'st') {
-			// 	localStorage.st = $(element).val();
-			// }
 		});
 
 		st = "";
 
 		// On initial page load 'st' equals current value of 'localStorage.st'
 		if ( $.pageLoad == true ) {
+			localStorage.st = ak_localize.student_id;
 			if( localStorage.st == 'undefined') {
 				st = "";
 				localStorage.st = "";
 			} else {
 				st = localStorage.st;
 			}
-			// console.log( 'st=' + st + ' | localStorage.st = ' + localStorage.st);
 			$.pageLoad = false;
 		} else { // on subsequent ajax loads 'st' and 'localStorage.st' will only change if the value of "#select-student" has changed. Otherwise changing a value on another field when a student is selected will not change the "#select-student" value to "" ("Custom Search").	
 			stOnChange = $('#select-student').val();
@@ -592,10 +583,15 @@
 			if ( $( "#select-student").length ) {
 				if ( stOnChange !== localStorage.st ) {
 					st = stOnChange;
-					//localStorage.st = stOnChange;
+					$( '.search-field' ).val( "" );
+					localStorage.s = "";
+					s = localStorage.s;
+					$( '.search-query' ).text('');
 				}
 			} 	
 		}
+
+
 
 		// if ( $( "#select-student" ).length && $.pageLoad == false ) {
 		// 	stOnChange = $('#select-student').val();
@@ -667,7 +663,7 @@
 			$('.asapkids-loading').hide();
 		});
 	});
-	
+
 	$( '.sign-out' ).click(function(event) {
 		localStorage.clear();
 	});
@@ -675,11 +671,13 @@
 	function add_query_params_url() {
 		//var myURL = document.location;
 		if (history.pushState) {
-			var newurl = 'http://' + window.location.hostname + '/wordpress/?' + locationHref();
-		    //var newurl = window.location.protocol + "//" + window.location.host + window.location.pathname + locationHref();
+			var newurl = window.location.pathname + '?' + locationHref();
+		    // var newurl = window.location.protocol + "//" + window.location.host + window.location.pathname + window.location.search + locationHref();
 		    window.history.pushState({path:newurl},'',newurl);
 		}
 	}
+
+	console.log(window.location.pathname);
 
 	function locationHref() {
 
@@ -715,13 +713,17 @@
 	}
 
 	function backToResultsUrl() {
-		var currentUrl = 'http://' + window.location.hostname + '/wordpress/?' + locationHref();
+		// var currentUrl = 'http://' + window.location.hostname + '/wordpress/?' + locationHref();
+		var currentUrl = window.location.protocol + "//" + window.location.host + '/wordpress/?' + locationHref();
 		location.href = currentUrl;
 	}
 
    $( ".back-to-results" ).click(function(event) {
+   		event.preventDefault();
    		backToResultsUrl();
+   		
    }); // End EL added...
+
    
    //using jQuery to hide "Apply Filters" button, this way if user has javascript disabled, search filtering still works
 	$('#view-results').hide();

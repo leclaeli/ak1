@@ -267,8 +267,22 @@ add_action("wp_ajax_nopriv_filter_results", "filter_results");
 function filter_results() {
     
 	$keyword = $_POST['s'];
-	
-    if ( isset( $_POST['st'] ) && $_POST['st'] != "" ) {
+
+    if(is_user_logged_in()) {
+        $current_user = wp_get_current_user();
+        $user_id = $current_user->ID;
+        // get students for current user and check against query
+        $args = array('post_type' => 'cpt_student', 'post_status' => 'private', 'author' => $user_id, 'posts_per_page' => -1 );                   
+        $students = get_posts($args);
+        if(!empty($students)) {               
+            $st_ids = array();
+            foreach ( $students as $id ) {
+                array_push( $st_ids, $id->ID );
+            }
+        }
+    }
+
+    if ( isset( $_POST['st'] ) && $_POST['st'] != "" && is_user_logged_in() && in_array( $_POST['st'] , $st_ids ) ) {
         $st = $_POST['st'];
         $st_name = get_field( 'student_name', $st );
         $distance = get_field( 'student_distance', $st);
@@ -279,7 +293,7 @@ function filter_results() {
         $address = get_user_address();
         // $price = $_POST['pr'];
     } else {
-        $st_name = "Custom Search";
+        $st_name = check_query_vars();
         $st = "";
         $distance = ( $_POST['di'] != 0 ? $_POST['di'] : 9999999 );
         $experience = ( !empty($_POST['ex']) ? $_POST['ex'] : array() );
@@ -291,12 +305,13 @@ function filter_results() {
         $price = $_POST['pr'];
     }
 
+
+
     global $wpdb;
     // If you use a custom search form
     // $keyword = sanitize_text_field( $_POST['keyword'] );
     // If you use default WordPress search form
     //$keyword = get_search_query();
-    print_r($keyword);
     $keyword = '%' . $wpdb->esc_like( $keyword ) . '%'; // Thanks Manny Fleurmond
     // Search in all custom fields
     
@@ -304,15 +319,15 @@ function filter_results() {
         SELECT DISTINCT post_id FROM {$wpdb->postmeta}
         WHERE meta_value LIKE '%s'
     ", $keyword ) );
+    
     // Search in post_title and post_content
     $post_ids_post = $wpdb->get_col( $wpdb->prepare( "
         SELECT DISTINCT ID FROM {$wpdb->posts}
         WHERE post_title LIKE '%s'
         OR post_content LIKE '%s'
     ", $keyword, $keyword ) );
-    $post_ids = array_merge( $post_ids_meta, $post_ids_post );
 
-    // print_r($post_ids);
+    $post_ids = array_merge( $post_ids_meta, $post_ids_post );
     
     $paged = (get_query_var('paged')) ? get_query_var('paged') : 1;
     $args = array(
@@ -435,7 +450,8 @@ function filter_results() {
         );
         return $orderby;
     }, 10, 2 );
-    $query = new WP_Query( $args );	
+
+    $query = new WP_Query( $args );
 
 	include( 'inc/search-results.php' );
     
@@ -451,6 +467,22 @@ function filter_results() {
     );
     echo '<div id="json_data">' . json_encode($filter_array) . '</div>';
     die();
+}
+
+function check_query_vars() {
+    $qvar_array = array( 'ex', 'ai', 'dow', 'sd', 'age', 'pr' );
+    foreach ( $qvar_array as $qvar_value ) {
+        if ( !isset( $_POST[$qvar_value] ) ) {
+            continue;
+        }
+        if ( !empty( $_POST[$qvar_value] || $_POST['di'] != 9999999 ) ) {
+            $st_name = "Custom Search";
+            break;
+        } else {
+            $st_name = "Student";
+        }
+    }
+    return $st_name;
 }
 
 /**
@@ -818,7 +850,7 @@ function asapkids_login_member() {
 			$user = wp_signon( $creds, false );
 			
 	        // get student meta data to pass in query
-	        $args = array('post_type' => 'cpt_student', 'post_status' => 'private', 'author' => $user->ID);	               
+	        $args = array('post_type' => 'cpt_student', 'post_status' => 'private', 'author' => $user->ID, 'posts_per_page' => -1 );	               
 	        $students = get_posts($args);
 			
 			if(!empty($students)) {               

@@ -19,11 +19,13 @@
 
 		<?php /* Start the Loop */ ?>
 		
-		<?php 
+		<?php
+	if ( !empty($args['post__in']) ) { // fix for searching metadata/custom fields. When 'post__in' is empty it gets all posts }
+
 			if($query->have_posts()) { 
 				$count = 0;
 		?>
-	
+	 
 			<?php while ( $query->have_posts() ) : $query->the_post();
 				$count = $count + 1;
 				if ($count & 1) {
@@ -83,7 +85,7 @@
 								<?php the_title( sprintf( '<h1 class="entry-title"><a href="%s" rel="bookmark">', esc_url( get_permalink() ) ), $featured_title ); ?>
 							</header><!-- .entry-header -->
 							<div class="organization-name">
-								<?php echo '<a href="'.get_permalink($org_id).'" title="'.$org_name.'">'.$org_name.'</a>'; ?>
+								<?php echo '<a href="'.esc_url( get_permalink( $org_id ) ).'" title="'.$org_name.'">'.$org_name.'</a>'; ?>
 							</div>
 							<div class="entry-summary">
 								<?php the_excerpt(); ?>
@@ -111,7 +113,7 @@
 										</li>
 									<?php endif; ?>
 				
-									<?php 
+									<?php
 										if( $date_start ) : 
 											
 											$date_append = "";
@@ -122,12 +124,20 @@
 												endif;
 											endif;
 									?>
+
+									<?php 
+										$ongoing = get_field( 'prog_ongoing');
+									?>
 										
 											<li><img src="<?php echo get_template_directory_uri().'/images/date-black.png'; ?>" width="40" height="40"><span>
-											<?php 
-												echo date("m/d/y", strtotime($date_start)); 
-												if( $date_append ) :
-													echo $date_append;
+											<?php
+												if ( !$ongoing ) :
+													echo date("m/d/y", strtotime($date_start)); 
+													if( $date_append ) :
+														echo $date_append;
+													endif;
+												else : 
+													echo '<span title="See program details for more information on program dates">Ongoing<span class="dashicons dashicons-info"></span></span>';
 												endif;
 											?>
 											</span>
@@ -164,6 +174,11 @@
 		<?php } else { ?>
 			<div class="asapkids-search-result-container"><div class="asapkids-add-padding">No programs were found based on your search criteria. Try switching your student profile or changing the filter values in the orange search menu to the left.</div></div>
 		<?php } ?>
+
+	<?php } else { ?>
+		<div class="asapkids-search-result-container"><div class="asapkids-add-padding">No programs were found based on your search criteria. Try switching your student profile or changing the filter values in the orange search menu to the left.</div></div>
+	<?php } ?>
+
 	</main><!-- #main -->
 	
 	<?php if($query->have_posts()) { ?>

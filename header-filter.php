@@ -23,12 +23,11 @@
 <?php 
 if(is_user_logged_in()) {
 	$user = wp_get_current_user();
-	
 	$args = array('post_type' => 'cpt_student', 'post_status' => 'private', 'author' => $user->ID, 'orderby' => 'title', 'order' => 'ASC', 'posts_per_page' => -1 );
 	$students = get_posts($args);
 }
 
-if ( isset( $_GET['st'] ) && $_GET['st'] != "" ) {
+if ( is_user_logged_in() && isset( $_GET['st'] ) && $_GET['st'] != "" ) {
     $st_id = $_GET['st'];
     $st_di = get_field( 'student_distance', $st_id);
     $st_ex = get_field( 'student_experience', $st_id );
@@ -185,12 +184,22 @@ if ( isset( $_GET['st'] ) && $_GET['st'] != "" ) {
                             }
                         }
                     ?>
+
+
+                    <!-- EJL Experiement 9/25 -->
+
+                    <?php 
+                        $interest_terms = get_terms( 'tax_interests' );
+                         echo '<pre>'; print_r($interest_terms); echo '</pre>'; 
+                    ?>
+
+
 	        	</div>
 		    </li>
 		    
 			<li>
                 <span>
-                    <img src="<?php echo get_template_directory_uri(); ?>/images/date.png" />
+                    <img src="<?php echo get_template_directory_uri(); ?>/images/day.png" />
                     Days
                 </span>
                 
@@ -225,7 +234,7 @@ if ( isset( $_GET['st'] ) && $_GET['st'] != "" ) {
                 </span>
                 <ul>
                     <li>
-                        <span>I'm looking for programs that begin before:</span>
+                        <span id="date-filter">I'm looking for programs that begin before:</span>
                         <input name="sd" type="text" id="datepicker" placeholder="Select a date" />
                     </li>
                 </ul>
@@ -270,7 +279,8 @@ if ( isset( $_GET['st'] ) && $_GET['st'] != "" ) {
 				<div class="asapkids-search-info-text">
                     <?php $search_query = ( get_search_query() != "" ? 'for "' . get_search_query() . '"' : "" ); ?>
 					<?php printf( esc_html__( '%s %s', 'asapkids' ), '<span class="total-results">Results </span>', '<span class="search-query">' . $search_query . '</span>' ); ?>
-					<span class="clear-search">Clear/Show All</span>
+					<!-- <div class="more-results">Looking for more results? Try a <span class="clear-search">Custom Search</span><div> -->
+                    <span class="clear-search">Clear/Show All</span>
 				</div>
 				<div class="asapkids-search-info-icons">
 					<ul>

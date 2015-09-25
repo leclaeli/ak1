@@ -1188,6 +1188,13 @@ darkest orange: #C65923;
    padding-bottom: 20px;
 }
 
+#date-filter {
+	padding: 0;
+	font-size: 14px;
+	white-space: normal;
+	line-height: normal;
+}
+
 .mm-next.mm-fullsubopen {
 
 }

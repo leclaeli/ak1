@@ -16,7 +16,7 @@ $student_list = '';
 if(is_user_logged_in()) {
 	$current_user = wp_get_current_user();
 	
-	$args = array('post_type' => 'cpt_student', 'post_status' => 'private', 'author' => $current_user->ID);
+	$args = array('post_type' => 'cpt_student', 'post_status' => 'private', 'author' => $current_user->ID, 'posts_per_page' => -1 );
 	$students = get_posts($args);
 	
 	if($students) {
@@ -40,11 +40,8 @@ if(is_user_logged_in()) {
 
 	<div id="primary" class="content-area">
 		<main id="main" class="site-main" role="main">
-			<?php if (!empty($_SERVER["QUERY_STRING"])) { ?>
-				<div class="back-to-results"><a href="<?php echo esc_url( home_url( '/?s' ) ); ?>">Back to Results</a></div>
-			<?php } else { ?>
-				<div class="back-to-results"><a href="<?php echo esc_url( home_url( '/?s' ) ); ?>">Go to Search</a></div>
-			<?php } ?>
+	
+			<div class="back-to-results"><a href="<?php echo esc_url( home_url( '/?s' ) ); ?>">Go to Search</a></div>
 			
 			<article id="post-<?php the_ID(); ?>" <?php post_class(); ?>>
 

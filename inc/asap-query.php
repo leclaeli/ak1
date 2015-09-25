@@ -1,16 +1,58 @@
 <?php
     $s = get_search_query();
-    $interests = get_query_var( 'ai' ); // associated_interests
-    $daysofweek = get_query_var( 'dow' ); // day of week
-    $start_date = get_query_var( 'sd' ); // start date 
-    $prog_orgs = get_query_var( 'org' ); // end date
-    $age = get_query_var( 'age' ); 
-    $user_address =  get_query_var( 'addy' );
-    $price = get_query_var( 'pr', 0 );
-    $experience = get_query_var( 'ex' ); // experience/activity level
-    $distance = ( get_query_var( 'di', 9999999 ) != 0 ? get_query_var( 'di' ) : 9999999 ); // distance
-    $sr = get_query_var( 'sr' ); // sort results
+    // $interests = get_query_var( 'ai' ); // associated_interests
+    // $daysofweek = get_query_var( 'dow' ); // day of week
+    // $start_date = get_query_var( 'sd' ); // start date 
+    // $prog_orgs = get_query_var( 'org' ); // end date
+    // $age = get_query_var( 'age' ); 
+    // $user_address =  get_query_var( 'addy' );
+    // $price = get_query_var( 'pr', 0 );
+    // $experience = get_query_var( 'ex' ); // experience/activity level
+    // $distance = ( get_query_var( 'di', 9999999 ) != 0 ? get_query_var( 'di' ) : 9999999 ); // distance
+    // $sr = get_query_var( 'sr' ); // sort results - not being used
 
+    $keyword = $_GET['s'];
+
+    if(is_user_logged_in()) {
+        $current_user = wp_get_current_user();
+        $user_id = $current_user->ID;
+        // get students for current user and check against query
+        $args = array('post_type' => 'cpt_student', 'post_status' => 'private', 'author' => $user_id, 'posts_per_page' => -1 );                   
+        $students = get_posts($args);
+        if(!empty($students)) {               
+            $st_ids = array();
+            foreach ( $students as $id ) {
+                array_push( $st_ids, $id->ID );
+            }
+        }
+    }
+
+    if ( isset( $_GET['st'] ) && $_GET['st'] != "" && is_user_logged_in() && in_array( $_GET['st'], $st_ids ) ) {
+        $st = $_GET['st'];
+        $st_name = get_field( 'student_name', $st );
+        $distance = get_field( 'student_distance', $st);
+        $experience = ( !empty( get_field( 'student_experience', $st ) ) ? get_field( 'student_experience', $st ) : array() );
+        $interests = ( !empty( get_field( 'student_interests', $st ) ) ? get_field( 'student_interests', $st ) : array() );
+        $daysofweek = ( !empty( get_field( 'student_days_desired', $st ) ) ? get_field( 'student_days_desired', $st ) : array() );
+        $age = asapkids_get_student_age( $st );
+        $address = get_user_address();
+
+    } else {
+        $st_name = "Student";
+        $st = "";
+        $interests = get_query_var( 'ai' ); // associated_interests
+        $daysofweek = get_query_var( 'dow' ); // day of week
+        $start_date = get_query_var( 'sd' ); // start date 
+        $prog_orgs = get_query_var( 'org' ); // end date
+        $age = get_query_var( 'age' ); 
+        $user_address =  get_query_var( 'addy' );
+        $price = get_query_var( 'pr', 0 );
+        $experience = get_query_var( 'ex' ); // experience/activity level
+        $distance = ( get_query_var( 'di', 9999999 ) != 0 ? get_query_var( 'di' ) : 9999999 ); // distance
+    }
+
+
+/* Sort results - Not currently being used 
     switch ($sr) {
         case "title_za" :
             $order = 'DESC';
@@ -34,13 +76,14 @@
             $order = 'ASC';
             $order_by = 'prog_date_start';
     }
+*/
 
 
     global $wpdb;
     // If you use a custom search form
     // $keyword = sanitize_text_field( $_POST['keyword'] );
     // If you use default WordPress search form
-    $keyword = get_search_query();
+    // $keyword = get_search_query();
     $keyword = '%' . $wpdb->esc_like( $keyword ) . '%'; // Thanks Manny Fleurmond
     // Search in all custom fields
     $post_ids_meta = $wpdb->get_col( $wpdb->prepare( "
@@ -100,9 +143,11 @@
         ),
     );
 
-    if ( $sr == "price" ) {
-        array_push( $args['meta_query'], array( 'key' => 'prog_cost', 'type' => 'NUMERIC') );
-    }
+    /* Sort results - not being used currently 
+    // if ( $sr == "price" ) {
+    //     array_push( $args['meta_query'], array( 'key' => 'prog_cost', 'type' => 'NUMERIC') );
+    // }
+    */
 
     if (!empty( $age )) {
         array_push($args['meta_query'],  array (
