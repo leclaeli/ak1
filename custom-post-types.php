@@ -119,7 +119,6 @@ function create_my_post_types() {
             'menu_icon' => 'dashicons-art',
             'menu_position' => 6,
             'labels' => $cpt_programs_labels,
-            'taxonomies' => array('tax_interests'), // EJL 9/25 experiment
             'rewrite' => array( 'slug' => 'programs' ),
             'supports' => array('thumbnail', 'title', 'editor'),
         )
@@ -137,18 +136,5 @@ function asapkids_interests_taxonomy() {
            'hierarchical' => true,
        )
    );
-
-// EJL 9/25 Experiment
-   register_taxonomy(
-       'tax_interests',
-       'cpt_program',
-       array(
-           'label' => __( 'Interests' ),
-           'rewrite' => array( 'slug' => 'Interests' ),
-           'hierarchical' => true,
-       )
-   );
-// End Experiment
-
 }
 add_action( 'init', 'asapkids_interests_taxonomy' ); 

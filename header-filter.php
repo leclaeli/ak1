@@ -184,17 +184,7 @@ if ( is_user_logged_in() && isset( $_GET['st'] ) && $_GET['st'] != "" ) {
                             }
                         }
                     ?>
-
-
-                    <!-- EJL Experiement 9/25 -->
-
-                    <?php 
-                        $interest_terms = get_terms( 'tax_interests' );
-                         echo '<pre>'; print_r($interest_terms); echo '</pre>'; 
-                    ?>
-
-
-	        	</div>
+                </div>
 		    </li>
 		    
 			<li>
