@@ -1,16 +1,5 @@
 <?php
     $s = get_search_query();
-    // $interests = get_query_var( 'ai' ); // associated_interests
-    // $daysofweek = get_query_var( 'dow' ); // day of week
-    // $start_date = get_query_var( 'sd' ); // start date 
-    // $prog_orgs = get_query_var( 'org' ); // end date
-    // $age = get_query_var( 'age' ); 
-    // $user_address =  get_query_var( 'addy' );
-    // $price = get_query_var( 'pr', 0 );
-    // $experience = get_query_var( 'ex' ); // experience/activity level
-    // $distance = ( get_query_var( 'di', 9999999 ) != 0 ? get_query_var( 'di' ) : 9999999 ); // distance
-    // $sr = get_query_var( 'sr' ); // sort results - not being used
-
     $keyword = $_GET['s'];
 
     if(is_user_logged_in()) {
@@ -53,6 +42,7 @@
 
 
 /* Sort results - Not currently being used 
+
     switch ($sr) {
         case "title_za" :
             $order = 'DESC';
@@ -75,10 +65,8 @@
         default :
             $order = 'ASC';
             $order_by = 'prog_date_start';
-    }
-*/
-
-
+    }*/
+    
     global $wpdb;
     // If you use a custom search form
     // $keyword = sanitize_text_field( $_POST['keyword'] );
@@ -96,7 +84,7 @@
         WHERE post_title LIKE '%s'
         OR post_content LIKE '%s'
     ", $keyword, $keyword ) );
-    $post_ids = array_merge( $post_ids_meta, $post_ids_post );
+    $post_ids = array_merge( $post_ids_meta, $post_ids_post );   
 
     /**
      * The WordPress Query class.
@@ -143,11 +131,10 @@
         ),
     );
 
-    /* Sort results - not being used currently 
-    // if ( $sr == "price" ) {
-    //     array_push( $args['meta_query'], array( 'key' => 'prog_cost', 'type' => 'NUMERIC') );
-    // }
-    */
+ 	/* Sort results - not being used currently 
+    if ( $sr == "price" ) {
+        array_push( $args['meta_query'], array( 'key' => 'prog_cost', 'type' => 'NUMERIC') );
+    } */
 
     if (!empty( $age )) {
         array_push($args['meta_query'],  array (
@@ -272,6 +259,6 @@
         return $orderby;
     }, 10, 2 );
     $query = new WP_Query( $args );
-    
+
     remove_filter( 'posts_orderby', $func, 10, 2 ); 	       
 ?>

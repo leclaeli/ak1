@@ -1,15 +1,6 @@
 (function($){
 
 	$(function() {
-		// localStorage.removeItem('ex');
-	
-		// if ( $( "#select-student" ).length ) {
-		// 	localStorage.st = $('#select-student').val();
-		// } else {
-		// 	localStorage.st = "";
-		// }
-
-
 
 		$( '#autocomplete' ).val( ak_localize.user_address );
 
@@ -235,6 +226,7 @@
 
 	function calculateDistances() {
 		programLocations();
+
 	  	var service = new google.maps.DistanceMatrixService();
 	  	service.getDistanceMatrix( {
 		  	origins: [getOrigin()],
@@ -255,12 +247,25 @@
 			if ( $(".program-list.pinned").length ) {
 				var origins = response.originAddresses;
 				var destinations = response.destinationAddresses;
+				//console.log('destinations: '+destinations);
+				//RDK this commented out code can be used to inject a default address into non-address programs
+				/*var test = destinations.indexOf('0,0');
+
+				if (test !== -1) {
+				    destinations[test] = '3413 N Downer Ave, Milwaukee, WI 53211, USA';
+				}*/
+
 				for (var i = 0; i < origins.length; i++) {
 					var results = response.rows[i].elements;
 					//addMarker(origins[i], false);
 					for (var j = 0; j < results.length; j++) {
-						document.getElementsByClassName('program-list pinned')[j].setAttribute("data-distance", results[j].distance.value );
-						document.getElementsByClassName('distance pinned')[j].innerHTML = results[j].distance.text;
+						//RDK added this to skip non-address programs so that the code doesn't bomb (code was bombing and not displaying # of results)
+						if(typeof results[j].distance === 'object') {
+							//console.log('results[j].distance.value: '+results[j].distance.value);
+							//console.log('results[j].distance.text: '+results[j].distance.text);
+							document.getElementsByClassName('program-list pinned')[j].setAttribute("data-distance", results[j].distance.value );
+							document.getElementsByClassName('distance pinned')[j].innerHTML = results[j].distance.text;
+						}
 					}
 				}
 				howFarIsIt();
@@ -273,18 +278,39 @@
 
 	// Distance filter based on user input
 	function howFarIsIt() {
+		//need these count vars to determine how many results were loaded and how many were removed to determine alternate row color
+		count = 0;
+		removed_count = 0;
 		$( '.program-list.pinned').each(function(index, el) {
+			count = count + 1;
 			var howFar = $( el ).attr('data-distance');
 			var progId = $( el ).attr( 'data-id' );
 			var maxDistance = $( '#select-distance' ).val();
+			
 			if (howFar > parseInt( maxDistance ) ) {
-
-				$( el ).remove();
+				removed_count = removed_count + 1;
+				//$( el ).remove();
+				$( el ).parent().remove();
 				$( '.marker[id="' + progId + '"]' ).remove();
 			};
-			// render the map
 		});
-		//asapkidsRenderMapOnce();
+
+		//this uses the number of results loaded and results removed based on the distance filter and assigned alternating row colors accordingly
+		if((count-removed_count) > 1) {
+			$('.asapkids-result').each(function(i, e) {
+				$(e).removeClass('.asapkids-odd');
+				$(e).removeClass('.asapkids-even');
+				if(i % 2 === 0) {
+					$(e).css('background-color', '#ffffff');
+				} else {
+					$(e).css('background-color', '#ebebeb');
+				}
+			});
+		} else {
+			if((count-removed_count) == 0) {
+				$('#main').html('<div class="asapkids-search-result-container"><div class="asapkids-add-padding">No programs were found based on your search criteria. Try switching your student profile or changing the filter values in the orange search menu to the left.</div></div>');
+			}
+		}
 		myLateFunction();
 	}    
 
@@ -302,25 +328,22 @@
 	 
 	// Count results (needs to run after google maps) - called from howFarIsIt()
 	function myLateFunction() {
-
 		var totalResults = $( '.program-list' ).filter(':visible').length;
-
 		if ( totalResults !== 1 ) {
-			
 			$( '.total-results' ).text( "Showing " + totalResults + " results" );
 		} else {
 			$( '.total-results' ).text( "Showing " +  totalResults + " result" );
 		}
-		
+
 		if ( totalResults == 0 || !$( '.program-list.pinned').length ) {
 			$( "#map-view" ).hide();
 		} else {
 			$( "#map-view" ).show();
-		} 
-		
+		}
+		 
 		if ( $('.search-field' ).val() !== "" || totalResults < 5 ) {
 			$( '.clear-search' ).show();
-		}  
+		}        
 	}	 
 	 
 // Programs list and map view slider (should be able to consolidate)
@@ -486,11 +509,9 @@
 	});
 	
 	$.pageLoad = true; // global
-
-	// Detect changes made to any of the filter menu fields and post the form to rerun the query
 	
+	//Detect changes made to any of the filter menu fields and post the form to rerun the query
 	$('body').on('change', 'form.filter-preferences :input:not("#autocomplete")', function(e) {
-	
 	// $('form.filter-preferences :input').change(function(e){
 		
 		//change the "Student" label to "Custom Search" when any field is changed
@@ -524,7 +545,7 @@
 			if($(element).is(':checked')) {
 				dow.push($(element).val());
 			}
-		});
+		});	 
 		
 		$("input:checkbox[name='ex[]']").each(function(index, element){
 			if($(element).is(':checked')) {
@@ -537,6 +558,7 @@
 		localStorage.ex = JSON.stringify(ex);
 		
 		//populate non-checkbox inputs
+
 		$('form.filter-preferences :input').not(':checkbox').each(function(index, element) {
 				
 			if(element.name == 'sd') {
@@ -563,6 +585,7 @@
 				s = $(element).val();
 				localStorage.s = s;
 			}
+
 		});
 
 		st = "";
@@ -588,22 +611,20 @@
 					s = localStorage.s;
 					$( '.search-query' ).text('');
 				}
-			} 	
+			}  	
 		}
 
-
-
-		// if ( $( "#select-student" ).length && $.pageLoad == false ) {
-		// 	stOnChange = $('#select-student').val();
-		// 	if (stOnChange !== localStorage.st) {
-		// 		st = stOnChange;
-		// 		localStorage.st = stOnChange;
-		// 	} else {
-		// 		st = "";
-		// 	}
-		// } else {
-		// 	st = "";
-		// }
+		/*if ( $( "#select-student" ).length && $.pageLoad == false ) {
+			stOnChange = $('#select-student').val();
+			if (stOnChange !== localStorage.st) {
+				st = stOnChange;
+				localStorage.st = stOnChange;
+			} else {
+				st = "";
+			}
+		} else {
+			st = "";
+		}*/
 
 		data = {
 			action: 'filter_results',
@@ -628,6 +649,17 @@
 			
 			var success_main = $($.parseHTML(response)).filter("#primary");
 			var success_map  = $($.parseHTML(response)).find("#programs-map");
+			
+			//this determines the number of results loaded and determines the alternating row color when any filters (except the distance filter) are used
+			$(success_main).find('.asapkids-result').each(function(e, el) {
+				$(el).removeClass('.asapkids-odd');
+				$(el).removeClass('.asapkids-even');
+				if(e % 2 === 0) {
+					$(el).css('background-color', '#ffffff');
+				} else {
+					$(el).css('background-color', '#ebebeb');
+				}
+			});
 			//$('#programs-map').remove();
 			//$('.asapkids-loading').hide();	
 			$('#main').remove(); 
@@ -651,19 +683,14 @@
 			$( '#map-view' ).removeClass('clicked');
 			if ( $( '.program-list' ).length ) {
 				calculateDistances();
-			} else {;
+			} else {
 				myLateFunction();
-				
-				var result_count = 0;
-
-				$('.asapkids-result').each(function() {
-					result_count = result_count + 1;
-				});
 			}
+			
 			$('.asapkids-loading').hide();
 		});
 	});
-
+	
 	$( '.sign-out' ).click(function(event) {
 		localStorage.clear();
 	});
@@ -671,14 +698,12 @@
 	function add_query_params_url() {
 		//var myURL = document.location;
 		if (history.pushState) {
-			var newurl = window.location.pathname + '?' + locationHref();
-		    // var newurl = window.location.protocol + "//" + window.location.host + window.location.pathname + window.location.search + locationHref();
+			var newurl = 'http://' + window.location.hostname + '/asapkids/?' + locationHref();
+		    //var newurl = window.location.protocol + "//" + window.location.host + window.location.pathname + locationHref();
 		    window.history.pushState({path:newurl},'',newurl);
 		}
-	}
-
-	console.log(window.location.pathname);
-
+	}	
+	
 	function locationHref() {
 
 		var localS = ['s','st','sd','age','addy','pr','di','ai','ex','dow'];
@@ -713,19 +738,25 @@
 	}
 
 	function backToResultsUrl() {
-		// var currentUrl = 'http://' + window.location.hostname + '/wordpress/?' + locationHref();
-		var currentUrl = window.location.protocol + "//" + window.location.host + '/wordpress/?' + locationHref();
+		var currentUrl = 'http://' + window.location.hostname + '/asapkids/?' + locationHref();
 		location.href = currentUrl;
 	}
 
    $( ".back-to-results" ).click(function(event) {
-   		event.preventDefault();
-   		backToResultsUrl();
-   		
+		event.preventDefault();
+	    backToResultsUrl();
    }); // End EL added...
-
    
    //using jQuery to hide "Apply Filters" button, this way if user has javascript disabled, search filtering still works
-	$('#view-results').hide();
+	$('#view-results').hide();	
+	
+	// SLICK SLIDER FOR HOMEPAGE
+	function slick() {
+		$('#recently-featured').slick({
+			  infinite: true,
+			  autoplay: true
+		});
+	}
+	slick();	
 	
 })(jQuery)

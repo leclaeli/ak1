@@ -58,7 +58,7 @@ $options = array(
 							<h1 class="entry-title"><?php echo $verbage; ?></h1>
 						</header><!-- .entry-header -->
 						
-						<?php if( isset($_GET['updated']) ) { 
+						<?php if( isset($_GET['updated']) ) {  
 							$st_id = $_GET['st']; ?>
 							<div class="asapkids-student-update">
 								Your student has been updated. <a href="<?php echo home_url( '?s=&st=' . $st_id ); ?>">View results</a>

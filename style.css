@@ -48,7 +48,7 @@ Nicolas Gallagher and Jonathan Neal http://necolas.github.com/normalize.css/
 # Normalize
 --------------------------------------------------------------*/
 html {
-	font-family: sans-serif;
+	font-family: "proxima-nova-soft",sans-serif;
 	-webkit-text-size-adjust: 100%;
 	-ms-text-size-adjust:     100%;
 }
@@ -543,6 +543,10 @@ a:active {
 	text-decoration: none;
 }
 
+.main-navigation a:visited {
+	color: white;
+}
+
 .main-navigation ul ul {
 	box-shadow: 0 3px 3px rgba(0, 0, 0, 0.2);
 	float: left;
@@ -550,6 +554,9 @@ a:active {
 	top: 1.5em;
 	left: -999em;
 	z-index: 99999;
+	background: royalblue;
+	padding: 20px 10px 10px 10px;
+	text-align: left; 
 }
 
 .main-navigation ul ul ul {
@@ -593,6 +600,11 @@ a:active {
 .main-navigation.toggled ul {
 	display: block;
 }
+
+.asapkids-profile-menu {
+	color: white;
+}
+
 
 @media screen and (min-width: 37.5em) {
 	.menu-toggle {
@@ -760,6 +772,52 @@ a:active {
 }
 
 /*--------------------------------------------------------------
+## Program Details
+--------------------------------------------------------------*/
+.entry-title {
+	margin: 1rem 0 0 0;
+}
+
+.entry-content .activity-title {
+	margin-bottom: 15px;
+}
+
+.asapkids-search-content-right {
+	margin-top: 30px;
+}
+
+.asapkids-search-content-right img {
+	float: left;
+	display: inline-block;
+	margin-right: 30px;
+}
+
+.entry-content {
+	max-width: 900px;
+}
+
+.entry-content ul {
+	display: block;
+	overflow: hidden;
+	padding: 0px;
+	margin: 0px;
+}
+
+.organization {
+	margin-bottom: 0px;
+}
+
+.entry-content ul li {
+	list-style-type: none;
+	margin: 5px 0;
+	display: block;
+}
+
+.entry-content h3 {
+	margin: 0px;
+}
+
+/*--------------------------------------------------------------
 ## Asides
 --------------------------------------------------------------*/
 .blog .format-aside .entry-title,
@@ -918,7 +976,24 @@ header .search-form .search-field {
 	width: 85%;
 }
 
-.main-navigation { display: inline-block; width: 33%; margin: 0; vertical-align: middle; float: none; text-align: right; }
+/* do not group these rules */
+header .search-form .search-field::-webkit-input-placeholder {
+    color: #FFF;
+}
+header .search-form .search-field:-moz-placeholder {
+    /* FF 4-18 */
+    color: #FFF;
+}
+header .search-form .search-field::-moz-placeholder {
+    /* FF 19+ */
+    color: #FFF;
+}
+header .search-form .search-field:-ms-input-placeholder {
+    /* IE 10+ */
+    color: #FFF;
+}
+
+.main-navigation { display: inline-block; width: 33%; margin: 0; vertical-align: middle; float: right; text-align: right; position: relative; }
 
 .main-navigation .menu-logged-out-container li { display: inline-block; padding: 10px 0 0 20px; }
 .main-navigation .menu-logged-out-container li a { color: #fff; }
@@ -987,14 +1062,17 @@ header .search-form .search-field {
 .asapkids-search-result-container .asapkids-search-content-left h1 a { text-decoration: none; color: #F57C09; }
 .asapkids-search-result-container .asapkids-search-content-left h1 a:hover { color: #666; }
 .asapkids-search-result-container .asapkids-search-content-left ul { margin: 0; padding: 0; list-style: none; list-style-position: outside; } 
-.asapkids-search-result-container .asapkids-search-content-left ul li { display: inline-block; vertical-align: top; width: 31%; padding: 0 10px 10px 0; }
+.asapkids-search-result-container .asapkids-search-content-left ul li { display: inline-block; padding: 5px 10px; margin-right: 15px; overflow: hidden; }
 .asapkids-search-result-container .asapkids-search-content-left .asapkids-program-details-button { margin-top: 10px; }
 .asapkids-search-result-container .asapkids-search-content-left .asapkids-program-details-button a { 
 	padding: 10px 20px;
 	border: 2px solid #0441EC; 
-	border-radius: 20px; 
+	border-radius: 24px; 
 	color: #0441EC;
 	text-decoration: none;
+	display: block;
+	width: 180px;
+	text-align: center;
 }
 .asapkids-search-result-container .asapkids-search-content-left .asapkids-program-details-button a:hover { background-color: #f1f1f1; }
 .asapkids-search-result-container .asapkids-search-content-left .organization-name a { font-weight: bold; color: #666; text-decoration: none; }
@@ -1008,7 +1086,7 @@ header .search-form .search-field {
 .asapkids-search-content-left .entry-summary { margin-top: 0; }
 .asapkids-search-content-left .entry-summary p { margin: 5px 0 10px 0; }
 .asapkids-search-content-left .entry-summary li img { display: inline-block; vertical-align: middle; }
-.asapkids-search-content-left .entry-summary li span { display: inline-block; }
+.asapkids-search-content-left .entry-summary li span { display: inline-block; vertical-align: middle;  }
 
 .content-area article .entry-content { margin: 0; }
 
@@ -1045,28 +1123,18 @@ header .search-form .search-field {
 .asapkids-student-update { padding: 20px; background-color: #ffcc00; border: 1px solid #e5e5e5; } 
 .asapkids_errors { padding: 8px; border: 1px solid #f50; margin: 0 0 15px; }
 
+.footer-left { display: inline-block; width: 20%; text-align: left; padding: 30px 15px 0 50px; vertical-align: top; }
+.footer-right { display: inline-block; width: 79%; }
 
-/** ASAP K!DS MEDIA QUERIES **/
-@media (max-width: 925px) {
-	.container-left .asapkids-menu li { padding-top: 35%; }	
-	.container-left .asapkids-menu li .icon-menu, .container-left .asapkids-menu li .icon-student, .container-left .asapkids-menu li .icon-location, 
-	.container-left .asapkids-menu li .icon-birthdate, .container-left .asapkids-menu li .icon-price, 
-	.container-left .asapkids-menu li .icon-date, .container-left .asapkids-menu li .icon-experience, 
-	.container-left .asapkids-menu li .icon-favorite{ background-size: 90%; }
-}
+.footer-left .asapkids-social-title { color: #666666; font-weight: bold; }
+.footer-left ul { list-style-position: outside; list-style-type: none; margin: 0; padding: 0; }
+.footer-left li { display: inline-block; padding-right: 5%; }
 
-@media (max-width: 799px) {
-	.site-branding { display: inline-block; width: 55%; }
-	header .search-form { display: inline-block; width: 45%; }
-	.main-navigation { display: block; width: 100%; text-align: left; background-color: #0441EC; margin: 0 0 -10px -50px; border-top: 1px solid #000; }
-}
-
-@media (max-width: 575px) {
-	.site-branding { display: inline-block; width: 75%; }
-	header .search-form { display: inline-block; height: 30px; width: 25%; background: #0441EC url('images/search-sm.png') no-repeat center right; }
-	header .search-form .search-field { display: none; }
-}
-
+.footer-site-nav { display: inline-block; margin: 0; vertical-align: middle; text-align: center; width: 100%; }
+.footer-site-nav ul { margin: 20px 0 0 0; padding: 0; }
+.footer-site-nav li { display: inline-block; padding: 10px 0 0 20px; }
+.footer-site-nav li a { color: #666666; font-weight: bold; }
+.footer-site-nav li a:hover { text-decoration: underline; }
 
 /*--------------------------------------------------------------
 ## Elijah's Styles
@@ -1096,10 +1164,10 @@ header .search-form .search-field {
 }
 
 .acf-map {
-    width: 100%;
-    height: 600px;
+    width: 95%;
+    height: 580px;
     border: #ccc solid 1px;
-    margin: 20px 0;
+    margin: 30px;
     left: 100%;
 }
 
@@ -1420,11 +1488,15 @@ html.mm-opening #hamburger::after {
 	border-radius: 25px; 
 	border: 2px solid #fff; 
 	padding: 10px 50px 10px 20px; 
-	color: #fff;
-	width: 85%;
+	color: #404040; 
+	width: 85%; 
 }
 
 /* HOMEPAGE SPECIFIC STYLES */
+
+.home .site-content {
+	padding: 0px !important;
+}
 
 #mast-header {
 	position: relative;
@@ -1508,9 +1580,336 @@ hr.mini {
 	font-weight: 700;
 }
 
+/*--------------------------------------------------------------
+## Slick Slider
+--------------------------------------------------------------*/
+/* Slider */
+.slick-slider
+{
+    position: relative;
+
+    display: block;
+
+    -moz-box-sizing: border-box;
+         box-sizing: border-box;
+
+    -webkit-user-select: none;
+       -moz-user-select: none;
+        -ms-user-select: none;
+            user-select: none;
+
+    -webkit-touch-callout: none;
+    -khtml-user-select: none;
+    -ms-touch-action: pan-y;
+        touch-action: pan-y;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.slick-list
+{
+    position: relative;
+
+    display: block;
+    overflow: hidden;
+
+    margin: 0;
+    padding: 0;
+}
+.slick-list:focus
+{
+    outline: none;
+}
+.slick-list.dragging
+{
+    cursor: pointer;
+    cursor: hand;
+}
+
+.slick-slider .slick-track,
+.slick-slider .slick-list
+{
+    -webkit-transform: translate3d(0, 0, 0);
+       -moz-transform: translate3d(0, 0, 0);
+        -ms-transform: translate3d(0, 0, 0);
+         -o-transform: translate3d(0, 0, 0);
+            transform: translate3d(0, 0, 0);
+}
+
+.slick-track
+{
+    position: relative;
+    top: 0;
+    left: 0;
+
+    display: block;
+}
+.slick-track:before,
+.slick-track:after
+{
+    display: table;
+
+    content: '';
+}
+.slick-track:after
+{
+    clear: both;
+}
+.slick-loading .slick-track
+{
+    visibility: hidden;
+}
+
+.slick-slide
+{
+    display: none;
+    float: left;
+
+    height: 100%;
+    min-height: 1px;
+}
+[dir='rtl'] .slick-slide
+{
+    float: right;
+}
+.slick-slide img
+{
+    display: block;
+}
+.slick-slide.slick-loading img
+{
+    display: none;
+}
+.slick-slide.dragging img
+{
+    pointer-events: none;
+}
+.slick-initialized .slick-slide
+{
+    display: block;
+}
+.slick-loading .slick-slide
+{
+    visibility: hidden;
+}
+.slick-vertical .slick-slide
+{
+    display: block;
+
+    height: auto;
+
+    border: 1px solid transparent;
+}
+
+@charset 'UTF-8';
+/* Slider */
+
+/* Arrows */
+.slick-prev,
+.slick-next
+{
+    font-size: 0;
+    line-height: 0;
+
+    position: absolute;
+    top: 50%;
+
+    display: block;
+
+    width: 20px;
+    height: 20px;
+    margin-top: -10px;
+    padding: 0;
+
+    cursor: pointer;
+
+    color: transparent;
+    border: none;
+    outline: none;
+    background: transparent;
+}
+.slick-prev:hover,
+.slick-prev:focus,
+.slick-next:hover,
+.slick-next:focus
+{
+    color: transparent;
+    outline: none;
+    background: transparent;
+}
+.slick-prev:hover:before,
+.slick-prev:focus:before,
+.slick-next:hover:before,
+.slick-next:focus:before
+{
+    opacity: 1;
+}
+.slick-prev.slick-disabled:before,
+.slick-next.slick-disabled:before
+{
+    opacity: .25;
+}
+
+.slick-prev:before,
+.slick-next:before
+{
+    font-family: 'slick';
+    font-size: 20px;
+    line-height: 1;
+
+    opacity: .75;
+    color: white;
+
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+.slick-prev
+{
+    left: -25px;
+}
+[dir='rtl'] .slick-prev
+{
+    right: -25px;
+    left: auto;
+}
+.slick-prev:before
+{
+    content: '←';
+}
+[dir='rtl'] .slick-prev:before
+{
+    content: '→';
+}
+
+.slick-next
+{
+    right: -25px;
+}
+[dir='rtl'] .slick-next
+{
+    right: auto;
+    left: -25px;
+}
+.slick-next:before
+{
+    content: '→';
+}
+[dir='rtl'] .slick-next:before
+{
+    content: '←';
+}
+
+/* Dots */
+.slick-slider
+{
+    margin-bottom: 30px;
+}
+
+.slick-dots
+{
+    position: absolute;
+    bottom: -45px;
+
+    display: block;
+
+    width: 100%;
+    padding: 0;
+
+    list-style: none;
+
+    text-align: center;
+}
+.slick-dots li
+{
+    position: relative;
+
+    display: inline-block;
+
+    width: 20px;
+    height: 20px;
+    margin: 0 5px;
+    padding: 0;
+
+    cursor: pointer;
+}
+.slick-dots li button
+{
+    font-size: 0;
+    line-height: 0;
+
+    display: block;
+
+    width: 20px;
+    height: 20px;
+    padding: 5px;
+
+    cursor: pointer;
+
+    color: transparent;
+    border: 0;
+    outline: none;
+    background: transparent;
+}
+.slick-dots li button:hover,
+.slick-dots li button:focus
+{
+    outline: none;
+}
+.slick-dots li button:hover:before,
+.slick-dots li button:focus:before
+{
+    opacity: 1;
+}
+.slick-dots li button:before
+{
+    font-family: 'slick';
+    font-size: 6px;
+    line-height: 20px;
+
+    position: absolute;
+    top: 0;
+    left: 0;
+
+    width: 20px;
+    height: 20px;
+
+    content: '•';
+    text-align: center;
+
+    opacity: .25;
+    color: black;
+
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+.slick-dots li.slick-active button:before
+{
+    opacity: .75;
+    color: black;
+}
+
+
+
+/* MANAGE STUDENTS  */
+.button {
+	padding: 10px 20px;
+	border: 2px solid #0441EC; 
+	border-radius: 24px; 
+	color: #0441EC;
+	text-decoration: none;
+	display: block;
+	width: 180px;
+	text-align: center;
+}
+
+.button.edit {
+	border: 2px solid #F57C09;
+	color: #F57C09;
+}
+
 /* RECENTLY ADDED EVENTS */
 
-#recently-added {
+#recently-featured {
 	display: block;
 	background: #FFF;
 	/*border: 1px solid red;*/
@@ -1593,4 +1992,85 @@ hr.mini {
 		padding-right: 0;
 	}
 
+}
+
+/** ASAP K!DS MEDIA QUERIES **/
+@media (max-width: 925px) {
+	.container-left .asapkids-menu li { padding-top: 35%; }	
+	.container-left .asapkids-menu li .icon-menu, .container-left .asapkids-menu li .icon-student, .container-left .asapkids-menu li .icon-location, 
+	.container-left .asapkids-menu li .icon-birthdate, .container-left .asapkids-menu li .icon-price, 
+	.container-left .asapkids-menu li .icon-date, .container-left .asapkids-menu li .icon-experience, 
+	.container-left .asapkids-menu li .icon-favorite{ background-size: 90%; }
+}
+
+@media (max-width: 799px) {
+	.site-header { background-color: #0441EC; width: 100%; height: 70px; margin: 0; padding: 10px 0; text-align: justify; position: relative; }
+	.site-branding { display: inline-block; width: 50%; float: left; }
+	.site-title {
+		padding-left: 20px;
+	}
+	header .search-form { display: inline-block; width: 45%; float: right; }
+	header .search-form .search-field {
+		display: block;
+		width: 65%;
+	}
+	.main-navigation { display: block; width: 100%; text-align: left; background-color: #0441EC; border-top: 1px solid #000; clear: both; margin-top: 10px;}	
+	.asapkids-search-info {
+		overflow: hidden;
+	}
+
+	.clear-search {
+		margin-left: 0px !important;
+	}
+	.asapkids-profile-menu {
+		margin-left: 30px;
+	}
+
+	#container, #primary {
+		overflow: visible;
+	}
+}
+
+@media (max-width: 575px) {
+	.site-branding { display: inline-block; width: 100%; }
+	header .search-form { display: block; height: 30px; width: 100%; background: #0441EC url('images/search-sm.png') no-repeat center right; float: left; }
+	header .search-form .search-field { width: 100%; }
+	.asapkids-search-content-right {
+		width: 100% !important;
+		margin-bottom: 15px;
+	}
+	.asapkids-result {
+		padding: 30px !important;
+	}
+
+	.asapkids-search-result-container .asapkids-search-content-left span.featured-title {
+		margin-left: 0px;
+		margin-top: 5px;
+	}
+
+	.entry-title {
+		width: 100%;
+	}
+
+	.entry-header {
+		margin-bottom: 15px;
+	}
+
+	.asapkids-search-result-container .asapkids-search-content-left ul li {
+		padding: 0px;
+	}
+
+	.asapkids-search-result-container .asapkids-search-content-left ul li img {
+		width: 30px;
+	}
+
+	.asapkids-search-result-container .asapkids-search-content-left ul li span {
+		width: calc(100% - 30px);
+	}
+
+	.organization {
+	width: 100%;
+	margin-top: 15px !important;
+	display: inline-block !important;
+	} 
 }

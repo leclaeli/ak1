@@ -23,7 +23,8 @@
 <?php 
 if(is_user_logged_in()) {
 	$user = wp_get_current_user();
-	$args = array('post_type' => 'cpt_student', 'post_status' => 'private', 'author' => $user->ID, 'orderby' => 'title', 'order' => 'ASC', 'posts_per_page' => -1 );
+	
+	$args = array('post_type' => 'cpt_student', 'post_status' => 'private', 'author' => $user->ID, 'orderby' => 'title', 'order' => 'ASC', 'posts_per_page' => -1);
 	$students = get_posts($args);
 }
 
@@ -175,6 +176,7 @@ if ( is_user_logged_in() && isset( $_GET['st'] ) && $_GET['st'] != "" ) {
 
                                 $interests_posts = get_posts($interest_args);
                                 echo '<div class="hide-interests">';
+                               
                                 foreach( $interests_posts as $post ) : setup_postdata($post);
                                     $int_id = strtolower( $category->name . '-' . get_the_title() ); ?> <!-- generate unique id -->
                                     <div><label for="<?php echo _e( $int_id, 'asapkids' );  ?>"><input id="<?php echo _e( $int_id, 'asapkids' );  ?>" type="checkbox" value="<? echo $post->ID; ?>" name="ai[]"><?php the_title(); ?></label></div>
@@ -184,7 +186,7 @@ if ( is_user_logged_in() && isset( $_GET['st'] ) && $_GET['st'] != "" ) {
                             }
                         }
                     ?>
-                </div>
+	        	</div>
 		    </li>
 		    
 			<li>
@@ -215,7 +217,7 @@ if ( is_user_logged_in() && isset( $_GET['st'] ) && $_GET['st'] != "" ) {
 
             </li>		    
 
-            <li class="dark-orange"><h4 class="menu-divider">Additional Filters</h4></li>
+            <li class="light-orange"><h4 class="menu-divider">Additional Filters</h4></li>
 
             <li>
                 <span>
@@ -259,18 +261,16 @@ if ( is_user_logged_in() && isset( $_GET['st'] ) && $_GET['st'] != "" ) {
 			<div class="site-branding">
 				<h1 class="site-title"><a href="<?php echo esc_url( home_url( '/' ) ); ?>" rel="home"><img src="<?php echo get_template_directory_uri().'/images/asapkids-logo.png'; ?>" title="ASAPK!DS" alt="ASAPK!DS"></a></h1>
 				<h2 class="site-description"><?php bloginfo( 'description' ); ?></h2>
-			</div><!-- .site-branding --><?php get_search_form(); ?>
-            <nav id="site-navigation" class="main-navigation" role="navigation"><?php wp_nav_menu( array( 'theme_location' => 'primary', 'menu_id' => 'primary-menu' ) ); ?>
+			</div><!-- .site-branding --><?php get_search_form(); ?><nav id="site-navigation" class="main-navigation" role="navigation"><?php wp_nav_menu( array( 'theme_location' => 'primary', 'menu_id' => 'primary-menu' ) ); ?>
 			</nav><!-- #site-navigation -->
 		</header><!-- #masthead -->
 		
 		<?php if ( is_search() ) { ?>
 			<div class="asapkids-search-info">
 				<div class="asapkids-search-info-text">
-                    <?php $search_query = ( get_search_query() != "" ? 'for "' . get_search_query() . '"' : "" ); ?>
+					<?php $search_query = ( get_search_query() != "" ? 'for "' . get_search_query() . '"' : "" ); ?>
 					<?php printf( esc_html__( '%s %s', 'asapkids' ), '<span class="total-results">Results </span>', '<span class="search-query">' . $search_query . '</span>' ); ?>
-					<!-- <div class="more-results">Looking for more results? Try a <span class="clear-search">Custom Search</span><div> -->
-                    <span class="clear-search">Clear/Show All</span>
+					<span class="clear-search">Clear/Show All</span>
 				</div>
 				<div class="asapkids-search-info-icons">
 					<ul>

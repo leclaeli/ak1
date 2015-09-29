@@ -137,7 +137,7 @@
 														echo $date_append;
 													endif;
 												else : 
-													echo '<span title="See program details for more information on program dates">Ongoing<span class="dashicons dashicons-info"></span></span>';
+													echo '<span title="See program details for more information on program dates">Ongoing<span class="dash icons dashicons-info"></span></span>';
 												endif;
 											?>
 											</span>

@@ -129,7 +129,7 @@ require_once('custom-post-types.php');
 if ( is_user_logged_in() && !current_user_can('manage_options')) {
 	add_filter('show_admin_bar', '__return_false');
 	//checks if the page being requested is an administrative page, but needs to allow ajax calls
-	if( is_admin() && !strpos($_SERVER["REQUEST_URI"], 'wp-admin/admin-ajax.php') ) {
+	if( is_admin() && (!strpos($_SERVER["REQUEST_URI"], 'wp-admin/admin-ajax.php') && !strpos($_SERVER["QUERY_STRING"], '&student=student')) ) {
 		wp_redirect( home_url( '/sign-up/' ) );
         exit();
 	}
@@ -137,10 +137,14 @@ if ( is_user_logged_in() && !current_user_can('manage_options')) {
 
 // Display appropriate wordpress menu based on whether a user is logged in or not
 function my_wp_nav_menu_args( $args ) {
-	if( is_user_logged_in() && !current_user_can('manage_options')) {
-	    $args['menu'] = 'logged-in';
+	if( 'primary' == $args['theme_location'] ) {
+		if( is_user_logged_in() && !current_user_can('manage_options')) {
+		    $args['menu'] = 'logged-in';
+		} else {
+		    $args['menu'] = 'logged-out';
+		}
 	} else {
-	    $args['menu'] = 'logged-out';
+		$args['menu'] = 'asapkids-footer-menu';
 	}
     return $args;
 }
@@ -177,7 +181,7 @@ function add_loginout_link( $items, $args ) {
     	global $current_user;
   		get_currentuserinfo();
   		
-        $items = '<li class="asapkids-profile-menu">'. $current_user->user_firstname . ' '. $current_user->user_lastname .'<ul>'. $items .'<li class="sign-out"><a href="'. wp_logout_url( home_url( '/' ) . 'sign-in') .'">Log Out</a></li></li></ul></ul>';
+        $items = '<li class="asapkids-profile-menu">'. $current_user->user_firstname . ' '. $current_user->user_lastname .'<ul>'. $items .'<li><a href="'. wp_logout_url( home_url( '/' ) . 'sign-in') .'">Log Out</a></li></li></ul></ul>';
     }
     return $items;
 }
@@ -189,7 +193,7 @@ function add_loginout_link( $items, $args ) {
 // Allows query vars to be added, removed, or changed prior to executing the query.
 function asapkids_query_vars( $qvars ) {
     $qvars[] = 'ai'; //associated_interests
-    $qvars[] = 'dow'; // dows of the week
+    $qvars[] = 'dow'; // days of the week
     $qvars[] = 'st'; // student's id
     $qvars[] = 'age'; // min age
     $qvars[] = 'maa'; // max age
@@ -220,7 +224,6 @@ class Location {
         } else {
             $this->has_loc = "";
             $this->my_location = "";
-            
         }
     }
 }
@@ -239,6 +242,7 @@ function get_user_address() {
 function asapkids_scripts() {
 	wp_enqueue_script( 'asapkids-skip-link-focus-fix', get_template_directory_uri() . '/js/skip-link-focus-fix.js', array(), '20130115', true );
     wp_enqueue_script('google-maps-api', 'https://maps.googleapis.com/maps/api/js?v=3.exp&signed_in=true&libraries=places', array(), false, true);    
+    wp_enqueue_script('slick-slider', get_stylesheet_directory_uri() . '/js/slick.js', array(), '20130115', true );
     wp_enqueue_script( 'asapkids-jquery-functions', get_template_directory_uri() . '/js/functions.js', array(), '20130115', true );
     wp_enqueue_script('marker-with-label', get_stylesheet_directory_uri() . '/js/markerwithlabel_packed.js', array(), false, true);
     wp_enqueue_script('jquery-ui-datepicker');	 
@@ -267,7 +271,7 @@ add_action("wp_ajax_nopriv_filter_results", "filter_results");
 function filter_results() {
     
 	$keyword = $_POST['s'];
-
+	
     if(is_user_logged_in()) {
         $current_user = wp_get_current_user();
         $user_id = $current_user->ID;
@@ -280,13 +284,13 @@ function filter_results() {
                 array_push( $st_ids, $id->ID );
             }
         }
-    }
-
+    }	
+	
     if ( isset( $_POST['st'] ) && $_POST['st'] != "" && is_user_logged_in() && in_array( $_POST['st'] , $st_ids ) ) {
         $st = $_POST['st'];
         $st_name = get_field( 'student_name', $st );
         $distance = get_field( 'student_distance', $st);
-        $experience = ( !empty( get_field( 'student_experience', $st ) ) ? get_field( 'student_experience', $st ) : array() );
+ 		$experience = ( !empty( get_field( 'student_experience', $st ) ) ? get_field( 'student_experience', $st ) : array() );
         $interests = ( !empty( get_field( 'student_interests', $st ) ) ? get_field( 'student_interests', $st ) : array() );
         $daysofweek = ( !empty( get_field( 'student_days_desired', $st ) ) ? get_field( 'student_days_desired', $st ) : array() );
         $age = asapkids_get_student_age( $st );
@@ -304,9 +308,7 @@ function filter_results() {
         $address= $_POST['addy'];
         $price = $_POST['pr'];
     }
-
-
-
+    
     global $wpdb;
     // If you use a custom search form
     // $keyword = sanitize_text_field( $_POST['keyword'] );
@@ -319,15 +321,13 @@ function filter_results() {
         SELECT DISTINCT post_id FROM {$wpdb->postmeta}
         WHERE meta_value LIKE '%s'
     ", $keyword ) );
-    
     // Search in post_title and post_content
     $post_ids_post = $wpdb->get_col( $wpdb->prepare( "
         SELECT DISTINCT ID FROM {$wpdb->posts}
         WHERE post_title LIKE '%s'
         OR post_content LIKE '%s'
     ", $keyword, $keyword ) );
-
-    $post_ids = array_merge( $post_ids_meta, $post_ids_post );
+    $post_ids = array_merge( $post_ids_meta, $post_ids_post );   
     
     $paged = (get_query_var('paged')) ? get_query_var('paged') : 1;
     $args = array(
@@ -450,8 +450,7 @@ function filter_results() {
         );
         return $orderby;
     }, 10, 2 );
-
-    $query = new WP_Query( $args );
+    $query = new WP_Query( $args );	
 
 	include( 'inc/search-results.php' );
     
@@ -874,15 +873,15 @@ function asapkids_login_member() {
 	            );
 	            
 				if ( !is_admin() ) {
-                    wp_redirect( home_url( '/manage-students' ) );
-	                //wp_redirect( add_query_arg( $arr_params, home_url( '/' ) ) );     
+	                wp_redirect( home_url( '/manage-students' ) );    
 	            	exit;
 	            }	            
 	        } else {
 	        	if ( !is_admin() ) {
 					wp_redirect( home_url( '/manage-students' ) );     
 					exit;
-	        	}
+	        	}	            
+	          	            
 	        }   
  			
 		} 
@@ -1048,9 +1047,6 @@ function wp_new_user_custom_notification( $user_id ) {
     $message  = __("Thanks for taking the time to explore ASAPk!ds !") . "\r\n\r\n";
     $message .= __("There are still a few enhancements on the way, as well as Content-based Activities that will allow you to really start putting all the resources in our community to work for your student's needs and give our community a chance to showcase the hard work of community organizations.") . "\r\n\r\n";
     $message .= __("We are here to help, so please feel free to reach out to us if you have any questions or concerns. We're hard at work improving and growing the ASAPk!ds community, and any feedback is greatly appreciated.") . "\r\n\r\n";
-    //$message .= wp_login_url() . "\r\n";
-    //$message .= sprintf(__('Username: %s'), $user_login) . "\r\n";
-    //$message .= sprintf(__('If you have any problems, please contact me at %s.'), get_option('admin_email')) . "\r\n\r\n";
 	$message  .= __("Thanks,") . "\r\n\r\n";
 	$message  .= __("ASAPk!ds Team") . "\r\n";
 	$message  .= __("info@asapkids.org") . "\r\n";
@@ -1108,36 +1104,36 @@ function asapkids_get_student_age( $student_id ) {
 
 // Redirect and load in student data - //EL added 8/21
 function asapkids_post_save_acf_form() {
-    if ( !is_admin() ) {
-        global $current_user;
-        get_currentuserinfo();
-        // get student meta data to pass in query
-        $args = array('post_type' => 'cpt_student', 'post_status' => 'private', 'author' => $current_user->ID);
-        $students = get_posts($args);
-        $st_ids = array();
-        foreach ( $students as $id ) {
-            array_push( $st_ids, $id->ID );
-        }
-        if ( isset( $_GET['st'] ) ) {
-            $st_id = get_query_var( 'st' );
-        } else {
-            $st_id = $st_ids[0];
-        }
-        
-        $st_di = get_field( 'student_distance', $st_id );
-        $st_ex = get_field( 'student_experience', $st_id );
-        $st_da = get_field( 'student_days_desired', $st_id );
-        $st_in = get_field( 'student_interests', $st_id );
-        $arr_params = array( 
-            'st' => $st_id,
-            'di' => $st_di,
-            'age' => asapkids_get_student_age( $st_ids[0] ),
-            'ex' => $st_ex,
-            'dow' => $st_da,
-            'ai' => $st_in,
-            's' => get_search_query(),
-        );
-    }
+    if(!is_admin()) {
+	    global $current_user;
+	    get_currentuserinfo();
+	    // get student meta data to pass in query
+	    $args = array('post_type' => 'cpt_student', 'post_status' => 'private', 'author' => $current_user->ID, 'posts_per_page' => -1);
+	    $students = get_posts($args);
+	    $st_ids = array();
+	    foreach ( $students as $id ) {
+	        array_push( $st_ids, $id->ID );
+	    }
+	    if ( isset( $_GET['st'] ) ) {
+	        $st_id = get_query_var( 'st' );
+	    } else {
+	        $st_id = $st_ids[0];
+	    }
+	    
+	    $st_di = get_field( 'student_distance', $st_id );
+	    $st_ex = get_field( 'student_experience', $st_id );
+	    $st_da = get_field( 'student_days_desired', $st_id );
+	    $st_in = get_field( 'student_interests', $st_id );
+	    $arr_params = array( 
+	        'st' => $st_id,
+	        'di' => $st_di,
+	        'age' => asapkids_get_student_age( $st_ids[0] ),
+	        'ex' => $st_ex,
+	        'dow' => $st_da,
+	        'ai' => $st_in,
+	        's' => get_search_query(),
+	    );
+	}    
     
     if ( !is_admin() && !is_page( 'add-student' ) ) {
         wp_redirect( add_query_arg( $arr_params, home_url( '/' ) ) );
@@ -1149,7 +1145,7 @@ function asapkids_post_save_acf_form() {
 }
 add_action('acf/save_post', 'asapkids_post_save_acf_form', 20);
 
-//Add custom admin column headers
+//Add custom admin column headers for Students
 add_filter('manage_cpt_student_posts_columns', 'asapkids_students_columns');
 function asapkids_students_columns( $defaults ) {
     unset( $defaults['date'] );
@@ -1161,7 +1157,7 @@ function asapkids_students_columns( $defaults ) {
     return $defaults;
 }
 
-//Populate custom admin columns
+//Populate custom admin columns for Students
 add_action( 'manage_cpt_student_posts_custom_column', 'asapkids_students_content', 10, 2 );
 function asapkids_students_content( $column_name, $post_id ) {  
     $post = get_post($post_id);
@@ -1179,7 +1175,7 @@ function asapkids_students_content( $column_name, $post_id ) {
     }
 }
 
-//Make custom admin columns sortable
+//Make custom admin columns sortable for Students
 add_filter( 'manage_edit-cpt_student_sortable_columns', 'sorting_cpt_student_columns' );
 function sorting_cpt_student_columns( $columns ) {
     $columns['author'] = 'author';
@@ -1187,64 +1183,68 @@ function sorting_cpt_student_columns( $columns ) {
     return $columns;
 }
 
-// /**
-//  * adds meta values on search query
-//  *
-//  * @param object $query
-//  *
-// **/
-// function custom_search_query( $query ) {
-//     if ( !is_admin() && $query->is_search ) {
-//         $query->set('meta_query', array(
-//             array(
-//                 'key' => 'prog_organization',
-//                 'value' => $query->query_vars['s'],
-//                 'compare' => 'LIKE'
-//             )
-//         ));
-//                 // you can add additional params like a specific 'post_type'
-//         // $query->set('post_type', 'project');
-//     };
-// }
-// add_filter( 'pre_get_posts', 'custom_search_query');
+//Add custom admin column headers for Programs
+add_filter('manage_cpt_program_posts_columns', 'asapkids_programs_columns');
+function asapkids_programs_columns( $defaults ) {
+    unset( $defaults['date'] );
+    $defaults['title']  = 'Program Name';
+    $defaults['cpt_interest']  = 'Type';
+    $defaults['prog_date_expires'] = 'Date Expires';    
+    $defaults['date']   = "Date";
+    return $defaults;
+}
 
-// function custom_search_query( $query ) {
-// $custom_fields = array(
-// // put all the meta fields you want to search for here
-// "prog_organization",
-// "org_contact_name",
-// "org_phone"
-// );
-// $searchterm = $query->query_vars['s'];
-// // we have to remove the "s" parameter from the query, because it will prevent the posts from being found
-// $query->query_vars['s'] = "";
-// if ($searchterm != "") {
-// $meta_query = array('relation' => 'OR');
-// foreach($custom_fields as $cf) {
-// array_push($meta_query, array(
-// 'key' => $cf,
-// 'value' => $searchterm,
-// 'compare' => 'LIKE'
-// ));
-// }
-// $query->set("meta_query", $meta_query);
-// };
-// }
-// add_filter( "pre_get_posts", "custom_search_query");
-// add_action( "save_post", "add_title_custom_field");
+//Populate custom admin columns for Students
+add_action( 'manage_cpt_program_posts_custom_column', 'asapkids_programs_content', 10, 2 );
+function asapkids_programs_content( $column_name, $post_id ) {  
+    if ($column_name == 'prog_date_expires') {
+    	if ( strlen(get_post_meta( $post_id, 'prog_date_expires', true )) ) { 
+        	$prog_date_expires = date('o/m/d', strtotime(get_post_meta($post_id, 'prog_date_expires', true)));
+        	echo $prog_date_expires;
+        } else {
+        	echo 'N/A';
+        }
+    }
+    
+	if ($column_name == 'cpt_interest') {   
+		$types = get_post_meta($post_id, 'associated_interests', true);
+		
+		if(!empty($types)) {
+			$count = 0;
+			$type_array = array();
+			
+			foreach ( $types as $id ) {
+				$type_array[] = get_the_title($id);
+		    }
+		    
+		    asort($type_array);
+			$type_array = implode(', ', $type_array);
+			
+			echo $type_array;
+		} else {
+			echo 'N/A';
+		}
+	}	  
+}
 
-// function add_title_custom_field($postid){
-// // since we removed the "s" from the search query, we want to create a custom field for every post_title. I don't use post_content, if you also want to index this, you will have to add this also as meta field.
-// update_post_meta($postid, "_post_title", $_POST["post_title"]);
-// }
+//Make custom admin columns sortable for Programs
+add_filter( 'manage_edit-cpt_program_sortable_columns', 'sorting_cpt_program_columns' );
+function sorting_cpt_program_columns( $columns ) {
+    $columns['prog_date_expires'] = 'prog_date_expires';
+    $columns['cpt_interest'] = 'cpt_interest';
+ 
+    return $columns;
+}
 
-// add_action( "save_post", "add_custom_fields_for_search" );
+//Register footer menu, so we can have a distinct menu set to display in footer only
+add_action( 'init', 'register_footer_menu' );
+function register_footer_menu() {
+  register_nav_menu('asapkids-footer-menu',__( 'Footer Menu' ));
+}
 
-// function add_custom_fields_for_search( $postid ) {
-//     $currentScreen = get_current_screen();
-//     if( $currentScreen->post_type === "cpt_program" ) {
-//         $org_id = get_field('prog_organization');
-//         $org_title = get_the_title($org_id[0]);
-//         update_post_meta( $postid, 'organization_name', $org_title );
-//     }
-// }
+//Allow registered users (subscribers) the ability to delete their student posts (which are set as private posts
+add_action( 'admin_init', 'add_subscriber_delete_cap');
+function add_subscriber_delete_cap() {
+    $role = get_role( 'subscriber' );
+	$role->add_cap('delete_private_posts');    
+}

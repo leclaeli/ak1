@@ -15,8 +15,30 @@ Template Name: The Home Page
 </div>
 
 <?php if ( have_posts() ) : while ( have_posts() ) : the_post(); ?>
-	<div id="recently-added">
-		<h3><a href="#" class="org">Community Youth Engagement Center</a> recently added <a href="#" class="activity">Girls Basketball</a></h3>
+	<div id="recently-featured">
+			
+		<?php $args = array(
+			'post_type'	=> 'cpt_program',
+		); 
+		?>
+		
+		<?php $activity = new WP_Query($args);
+			if ($activity->have_posts()) :
+			while($activity->have_posts()) :
+			$activity->the_post();
+			$org_id = get_field('prog_organization')[0];
+			$featured = get_field('prog_featured');
+
+			if ($featured){ ?>
+							
+				<div>
+				<h3><a href="#" class="org"><?php echo get_the_title($org_id); ?></a> featured <a href="<?php the_permalink();?>" class="activity"><?php the_title();?></a></h3>
+				</div>
+
+			<?php } ?>
+
+		<?php endwhile; endif; wp_reset_postdata();?>
+		
 	</div>
 <?php endwhile; endif; ?>
 
@@ -30,48 +52,23 @@ Template Name: The Home Page
 	<span class="circle">1</span>
 	<img src="<?php echo get_template_directory_uri().'/images/orange-icons/create-profile.png';?>"/>
 	<h4>Create Student Profiles</h4>
-	<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam porta dui sed nibh elementum pharetra. Ut urna tortor, maximus non porta sit amet, sollicitudin ut tellus.</p>
+	<p><?php the_field('paragraph_1');?></p>
 	</div>
 
 	<div class="column column2">
 	<span class="circle">2</span>
 	<img src="<?php echo get_template_directory_uri().'/images/orange-icons/curated-list.png';?>"/>
 	<h4>Receive Curated Results</h4>
-	<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam porta dui sed nibh elementum pharetra. Ut urna tortor, maximus non porta sit amet, sollicitudin ut tellus.</p>
+	<p><?php the_field('paragraph_2');?></p>
 	</div>
 
 	<div class="column column3">
 	<span class="circle">3</span>
 	<img src="<?php echo get_template_directory_uri().'/images/orange-icons/sign-up.png';?>"/>
 	<h4>Sign Your Students Up</h4>
-	<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam porta dui sed nibh elementum pharetra. Ut urna tortor, maximus non porta sit amet, sollicitudin ut tellus.</p>
+	<p><?php the_field('paragraph_3');?></p>
 	</div>
 </div> <!-- row -->
-
-<div class="row two-columns">
-	<h2>Available Activities</h2>
-	<hr class="mini" align="center" />
-
-	<div class="column column1">
-		<ul>
-			<li><img src="<?php echo get_template_directory_uri().'/images/orange-icons/sports.png';?>"/>Sports</li>
-			<li><img src="<?php echo get_template_directory_uri().'/images/orange-icons/music.png';?>"/>Music</li>
-			<li><img src="<?php echo get_template_directory_uri().'/images/orange-icons/art.png';?>"/>Art</li>
-			<li><img src="<?php echo get_template_directory_uri().'/images/orange-icons/reading.png';?>"/>Reading</li>
-			<li><img src="<?php echo get_template_directory_uri().'/images/orange-icons/math.png';?>"/>Math</li>
-		</ul>
-	</div>
-
-	<div class="column column2">
-		<ul>
-			<li><img src="<?php echo get_template_directory_uri().'/images/orange-icons/outdoors.png';?>"/>Outdoors</li>
-			<li><img src="<?php echo get_template_directory_uri().'/images/orange-icons/games.png';?>"/>Gaming</li>
-			<li><img src="<?php echo get_template_directory_uri().'/images/orange-icons/cooking.png';?>"/>Cooking</li>
-			<li><img src="<?php echo get_template_directory_uri().'/images/orange-icons/photography.png';?>"/>Photography</li>
-			<li><img src="<?php echo get_template_directory_uri().'/images/orange-icons/science.png';?>"/>Science</li>
-		</ul>
-	</div>
-</div><!-- row -->
 
 </div><!-- information -->
 
